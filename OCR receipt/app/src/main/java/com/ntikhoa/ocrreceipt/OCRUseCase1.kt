@@ -50,6 +50,8 @@ class OCRUseCase1 {
             if (lowerCaseFlag) {
                 continue
             }
+
+            lines1[i] = lines1[i].replace("0", "O")
         }
 
         return lines1.joinToString {

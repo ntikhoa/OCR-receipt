@@ -20,6 +20,7 @@ class MainActivity : AppCompatActivity() {
     private val binding get() = _binding!!
 
     val RESULT_LOAD_IMG = 100
+    val RESULT_TAKE_IMG = 101
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,13 +28,14 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         binding.btnCapture.setOnClickListener {
-//            val photoPickerIntent = Intent(Intent.ACTION_PICK)
-//            photoPickerIntent.type = "image/*"
-//            startActivityForResult(photoPickerIntent, RESULT_LOAD_IMG)
-
-
             val cameraIntent = Intent(applicationContext, TakePhotoActivity::class.java)
-            startActivityForResult(cameraIntent, RESULT_LOAD_IMG)
+            startActivityForResult(cameraIntent, RESULT_TAKE_IMG)
+        }
+
+        binding.btnLoad.setOnClickListener {
+            val photoPickerIntent = Intent(Intent.ACTION_PICK)
+            photoPickerIntent.type = "image/*"
+            startActivityForResult(photoPickerIntent, RESULT_LOAD_IMG)
         }
     }
 
@@ -41,13 +43,14 @@ class MainActivity : AppCompatActivity() {
         super.onActivityResult(reqCode, resultCode, data)
         if (resultCode == RESULT_OK) {
             try {
-//                data?.data?.let {
-//                    getTextFromImage(it)
-//                }
-
-
-                data?.getParcelableExtra<Uri>("uri")?.let {
-                    getTextFromImage(it)
+                if (reqCode == RESULT_LOAD_IMG) {
+                    data?.data?.let {
+                        getTextFromImage(it)
+                    }
+                } else if (reqCode == RESULT_TAKE_IMG) {
+                    data?.getParcelableExtra<Uri>("uri")?.let {
+                        getTextFromImage(it)
+                    }
                 }
             } catch (e: FileNotFoundException) {
                 e.printStackTrace()
@@ -65,9 +68,9 @@ class MainActivity : AppCompatActivity() {
         recognizer.process(inputImage)
             .addOnSuccessListener { visionText ->
 
-                val ocr = OCRUseCase1()
-                val text = ocr(visionText)
-                binding.tvOcrResult.text = text
+//                val ocr = OCRUseCase1()
+//                val text = ocr(visionText)
+                binding.tvOcrResult.text = visionText.text
 
 //                val ocr = OCRUseCase()
 //                val text = ocr(visionText)
