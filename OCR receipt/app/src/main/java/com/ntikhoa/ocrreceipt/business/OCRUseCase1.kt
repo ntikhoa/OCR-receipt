@@ -1,4 +1,4 @@
-package com.ntikhoa.ocrreceipt
+package com.ntikhoa.ocrreceipt.business
 
 import androidx.core.text.isDigitsOnly
 import com.google.mlkit.vision.text.Text

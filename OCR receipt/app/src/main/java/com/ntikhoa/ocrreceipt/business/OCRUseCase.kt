@@ -1,10 +1,9 @@
-package com.ntikhoa.ocrreceipt
+package com.ntikhoa.ocrreceipt.business
 
 import android.graphics.Rect
 import androidx.core.text.isDigitsOnly
 import com.google.mlkit.vision.text.Text
-import kotlin.math.max
-import kotlin.math.min
+import com.ntikhoa.ocrreceipt.MyText
 
 class OCRUseCase {
     operator fun invoke(visionText: Text): String {

@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".MainActivity">
+    tools:context=".presentation.MainActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -31,20 +31,11 @@
         android:orientation="horizontal">
 
         <Button
-            android:id="@+id/btn_capture"
-            android:layout_width="0dp"
+            android:id="@+id/btn_choose_image"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="16dp"
-            android:layout_weight="1"
-            android:text="Capture" />
-
-        <Button
-            android:id="@+id/btn_load"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_marginHorizontal="16dp"
-            android:layout_weight="1"
-            android:text="Load Image" />
+            android:text="Choose Image" />
 
     </LinearLayout>
 

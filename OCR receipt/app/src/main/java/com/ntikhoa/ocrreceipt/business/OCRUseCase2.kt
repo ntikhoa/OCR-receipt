@@ -1,6 +1,5 @@
-package com.ntikhoa.ocrreceipt
+package com.ntikhoa.ocrreceipt.business
 
-import android.graphics.Rect
 import androidx.core.text.isDigitsOnly
 import com.google.mlkit.vision.text.Text
 
@@ -13,35 +12,31 @@ class OCRUseCase2 {
         val leftTextBlocks = removeRightData(croppedTextBlocks)
         val productNames = getProductName(leftTextBlocks)
 
-        return productNames.joinToString {
-            it + "\n\n"
+        return productNames.reduce { acc, s ->
+            acc + "\n" + s
         }
-
-//        return leftTextBlocks.joinToString {
-//            it.text + "                    " +
-//            it.boundingBox!!.top + " " + it.boundingBox!!.left +
-//                    "\n\n"
-//        }
     }
 
-    fun getProductName(textBlocks: List<Text.TextBlock>): List<String> {
+    private fun getProductName(textBlocks: List<Text.TextBlock>): List<String> {
         val lines = textBlocks.flatMap {
             it.text.split("\n")
         }.toMutableList()
 
         for (i in lines.indices.reversed()) {
-            if (lines[i].isDigitsOnly()) {
+            var line = lines[i]
+            line = Regex("[^A-Za-z0-9]").replace(line, "")
+
+            if (line.isDigitsOnly()) {
                 lines.removeAt(i)
-            } else if (lines[i].replace(".", "").isDigitsOnly()) {
-                lines.removeAt(i)
-            } else if (lines[i].contains("KHUYEN") || lines[i].contains("MAI")) {
+            } else if (line.contains("KHUYEN") || lines.contains("MAI")) {
+                println(line)
                 lines.removeAt(i)
             }
         }
         return lines
     }
 
-    fun removeRightData(textBlocks: List<Text.TextBlock>): List<Text.TextBlock> {
+    private fun removeRightData(textBlocks: List<Text.TextBlock>): List<Text.TextBlock> {
         val sortedTextBlock = textBlocks.sortedBy {
             it.boundingBox!!.left
         }
@@ -54,14 +49,12 @@ class OCRUseCase2 {
             dist.add(leftPosBoxes[i + 1] - leftPosBoxes[i])
         }
 
-        println(leftPosBoxes.toString())
-        println(dist.toString())
         val maxDist = dist.maxOf { it }
         val maxDistIndex = dist.indexOf(maxDist) + 1
         return sortedTextBlock.subList(0, maxDistIndex)
     }
 
-    fun croppedData(textBlocks: List<Text.TextBlock>): List<Text.TextBlock> {
+    private fun croppedData(textBlocks: List<Text.TextBlock>): List<Text.TextBlock> {
 
         val mapTextBlock = textBlocks.map {
             it.text
@@ -78,9 +71,10 @@ class OCRUseCase2 {
         for (i in mapTextBlock.indices) {
             val tempText = mapTextBlock[i]
 
-            if (!startFlag && tempText.contains("[*|=|:]([*|=|:])+".toRegex()) && i < end) {
+            if (!startFlag && tempText.contains("[*|=|:]([*|=|:])+".toRegex())) {
                 start = i + 1
                 startFlag = true
+                endFlag = false
                 continue
             }
             if (!endFlag) {

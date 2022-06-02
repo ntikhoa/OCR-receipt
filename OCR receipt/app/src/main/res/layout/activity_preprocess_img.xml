@@ -4,14 +4,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".PreprocessImgActivity">
+    tools:context=".presentation.PreprocessImgActivity">
 
     <ImageView
         android:id="@+id/iv_receipt"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:scaleType="fitCenter"
-        android:src="@drawable/receipt1" />
+        android:scaleType="fitCenter" />
 
     <LinearLayout
         android:id="@+id/ll_preprocessing"
