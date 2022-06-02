@@ -28,8 +28,11 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         binding.btnCapture.setOnClickListener {
-            val cameraIntent = Intent(applicationContext, TakePhotoActivity::class.java)
-            startActivityForResult(cameraIntent, RESULT_TAKE_IMG)
+//            val cameraIntent = Intent(applicationContext, TakePhotoActivity::class.java)
+//            startActivityForResult(cameraIntent, RESULT_TAKE_IMG)
+
+            val preprocessIntent = Intent(applicationContext, PreprocessImgActivity::class.java)
+            startActivityForResult(preprocessIntent, RESULT_TAKE_IMG)
         }
 
         binding.btnLoad.setOnClickListener {
@@ -67,10 +70,13 @@ class MainActivity : AppCompatActivity() {
 
         recognizer.process(inputImage)
             .addOnSuccessListener { visionText ->
+                val ocr = OCRUseCase2()
+                val text = ocr(visionText)
+                binding.tvOcrResult.text = text
 
 //                val ocr = OCRUseCase1()
 //                val text = ocr(visionText)
-                binding.tvOcrResult.text = visionText.text
+//                binding.tvOcrResult.text = visionText.text
 
 //                val ocr = OCRUseCase()
 //                val text = ocr(visionText)
@@ -80,13 +86,14 @@ class MainActivity : AppCompatActivity() {
 //                var textString = ""
 //                for (textBlock in visionText.textBlocks) {
 //                    val text = textBlock.text + " " +
-//                            textBlock.boundingBox?.top + " " +
-//                            textBlock.boundingBox?.left + " " +
-//                            textBlock.boundingBox?.width() + " " +
-//                            textBlock.boundingBox?.height()
+////                            textBlock.boundingBox?.top + " " +
+//                            textBlock.boundingBox?.left + " "
+////                            textBlock.boundingBox?.width() + " " +
+////                            textBlock.boundingBox?.height()
 //                    textString += text + "\n\n"
 //                }
-//                binding.tvOcrResult.text = visionText.text.replace("\n", "\n\n")
+//                binding.tvOcrResult.text = textString
+////                binding.tvOcrResult.text = visionText.text.replace("\n", "\n\n")
             }
             .addOnFailureListener { e ->
                 println(e.message)
