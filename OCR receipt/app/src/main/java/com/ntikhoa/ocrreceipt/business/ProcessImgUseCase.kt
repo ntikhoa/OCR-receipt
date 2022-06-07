@@ -12,15 +12,15 @@ class ProcessImgUseCase {
         OpenCVLoader.initDebug()
     }
 
-    suspend operator fun invoke(bitmap: Bitmap): Bitmap {
-        val mat = bitmapToMat(bitmap)
+    suspend operator fun invoke(mat: Mat): Bitmap {
+//        val mat = bitmapToMat(bitmap)
 
         val grayMat = Mat()
         Imgproc.cvtColor(mat, grayMat, Imgproc.COLOR_RGB2GRAY)
+        var matRes: Mat = division(grayMat)
+//        matRes = binarization(matRes)
 
-        val bwMat = binarization(grayMat)
-
-        return convertToBitmap(bwMat)
+        return convertToBitmap(matRes)
     }
 
     private suspend fun bitmapToMat(bitmap: Bitmap): Mat {
@@ -30,18 +30,17 @@ class ProcessImgUseCase {
         return mat
     }
 
+    private suspend fun division(graySrc: Mat): Mat {
+        val mat = Mat()
+        val smooth = Mat()
+        Imgproc.GaussianBlur(graySrc, smooth, Size(95.0, 95.0), 0.0)
+        Core.divide(graySrc, smooth, mat, 255.0)
+
+        return mat
+    }
+
     private suspend fun binarization(graySrc: Mat): Mat {
         val dstMat = Mat()
-//        Imgproc.adaptiveThreshold(
-//            graySrc,
-//            dstMat,
-//            255.0,
-//            Imgproc.ADAPTIVE_THRESH_GAUSSIAN_C,
-//            Imgproc.THRESH_BINARY,
-//            11,
-//            2.0
-//        )
-
         //127.0
         Imgproc.threshold(graySrc, dstMat, 127.0, 255.0, Imgproc.THRESH_BINARY)
         return dstMat
@@ -108,3 +107,25 @@ class ProcessImgUseCase {
         return result
     }
 }
+
+//fun cc() {
+//    val matFirst = Mat()
+//    Core.multiply(graySrc, Scalar(1.5 + 1), matFirst)
+//    val matSecond = Mat()
+//    Core.multiply(smooth, Scalar(-1.5), matSecond)
+//    Core.add(matFirst, matSecond, mat)
+//    for (i in 0 until mat.rows()) {
+//        for (j in 0 until mat.cols()) {
+//            if (mat.get(i, j)[0] < 0) {
+//                mat.get(i, j)[0] = 0.0
+//            }
+//        }
+//    }
+//    for (i in 0 until mat.rows()) {
+//        for (j in 0 until mat.cols()) {
+//            if (mat.get(i, j)[0] > 255) {
+//                mat.get(i, j)[0] = 255.0
+//            }
+//        }
+//    }
+//}

@@ -57,14 +57,14 @@ class MainActivity : AppCompatActivity() {
 
         recognizer.process(inputImage)
             .addOnSuccessListener { visionText ->
-                val ocr = OCRUseCase2()
-                val text = ocr(visionText)
-                val resText = "OCR process:\n" +
-                        text +
-                        "\n\n" +
-                        "Raw OCR:\n" +
-                        visionText.text
-                binding.tvOcrResult.text = resText
+//                val ocr = OCRUseCase2()
+//                val text = ocr(visionText)
+//                val resText = "Processed OCR:\n" +
+//                        text +
+//                        "\n\n" +
+//                        "Raw OCR:\n" +
+//                        visionText.text
+                binding.tvOcrResult.setText(visionText.text)
             }
             .addOnFailureListener { e ->
                 println(e.message)

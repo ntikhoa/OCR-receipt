@@ -17,7 +17,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <TextView
+            <EditText
                 android:id="@+id/tv_ocr_result"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />

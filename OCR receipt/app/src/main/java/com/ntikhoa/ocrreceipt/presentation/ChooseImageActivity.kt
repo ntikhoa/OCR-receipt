@@ -12,6 +12,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.net.toUri
 import com.ntikhoa.ocrreceipt.Constants
+import com.ntikhoa.ocrreceipt.R
 import com.ntikhoa.ocrreceipt.business.ProcessImgUseCase
 import com.ntikhoa.ocrreceipt.business.getOutputDir
 import com.ntikhoa.ocrreceipt.databinding.ActivityChooseImageBinding
@@ -19,6 +20,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.opencv.android.Utils
 import java.io.File
 import java.io.FileOutputStream
 import java.text.SimpleDateFormat
@@ -53,24 +55,27 @@ class ChooseImageActivity : AppCompatActivity() {
 
             btnProcessImage.setOnClickListener {
                 CoroutineScope(Dispatchers.Main).launch {
-                    val bitmap = withContext(Dispatchers.IO) {
-                        lateinit var bitmap: Bitmap
-                        if (Build.VERSION.SDK_INT < 28) {
-                            bitmap = MediaStore.Images.Media.getBitmap(contentResolver, imageUri)
-                        } else {
-                            val source: ImageDecoder.Source =
-                                ImageDecoder.createSource(contentResolver, imageUri!!)
-                            bitmap = ImageDecoder.decodeBitmap(source)
-                        }
-                        bitmap
+                    val mat = withContext(Dispatchers.IO) {
+                        Utils.loadResource(applicationContext, R.drawable.receipt2)
                     }
+//                    val bitmap = withContext(Dispatchers.IO) {
+//                        lateinit var bitmap: Bitmap
+//                        if (Build.VERSION.SDK_INT < 28) {
+//                            bitmap = MediaStore.Images.Media.getBitmap(contentResolver, imageUri)
+//                        } else {
+//                            val source: ImageDecoder.Source =
+//                                ImageDecoder.createSource(contentResolver, imageUri!!)
+//                            bitmap = ImageDecoder.decodeBitmap(source)
+//                        }
+//                        bitmap
+//                    }
 
                     val img = withContext(Dispatchers.Default) {
-                        processImg(bitmap)
+                        processImg(mat)
                     }
-                    withContext(Dispatchers.IO) {
-                        imageUri = getImageUri(applicationContext, img)
-                    }
+//                    withContext(Dispatchers.IO) {
+//                        imageUri = getImageUri(applicationContext, img)
+//                    }
 
                     binding.ivReceipt.setImageBitmap(img)
                 }
