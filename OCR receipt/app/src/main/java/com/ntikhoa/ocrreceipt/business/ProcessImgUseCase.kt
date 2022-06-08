@@ -8,19 +8,29 @@ import org.opencv.imgproc.Imgproc
 
 class ProcessImgUseCase {
 
+    //Init opencv library
     init {
         OpenCVLoader.initDebug()
     }
+
+    /**
+     * Remove shadow (Division)
+     * Sharp image
+     * Binarization
+     * Dilation (thicc font)
+     * Rotation and deskewing (optional)
+     */
 
     suspend operator fun invoke(mat: Mat): Bitmap {
 //        val mat = bitmapToMat(bitmap)
 
         val grayMat = Mat()
         Imgproc.cvtColor(mat, grayMat, Imgproc.COLOR_RGB2GRAY)
-        var matRes: Mat = division(grayMat)
-//        matRes = binarization(matRes)
-
-        return convertToBitmap(matRes)
+        var mat = division(grayMat)
+        //TODO: SHARP
+        mat = binarization(mat)
+        mat = dilation(mat)
+        return convertToBitmap(mat)
     }
 
     private suspend fun bitmapToMat(bitmap: Bitmap): Mat {
@@ -30,20 +40,35 @@ class ProcessImgUseCase {
         return mat
     }
 
+    //remove shadow
     private suspend fun division(graySrc: Mat): Mat {
         val mat = Mat()
-        val smooth = Mat()
-        Imgproc.GaussianBlur(graySrc, smooth, Size(95.0, 95.0), 0.0)
-        Core.divide(graySrc, smooth, mat, 255.0)
-
+        Imgproc.GaussianBlur(graySrc, mat, Size(95.0, 95.0), 0.0)
+        Core.divide(graySrc, mat, mat, 255.0)
         return mat
     }
 
     private suspend fun binarization(graySrc: Mat): Mat {
         val dstMat = Mat()
         //127.0
-        Imgproc.threshold(graySrc, dstMat, 127.0, 255.0, Imgproc.THRESH_BINARY)
+        Imgproc.threshold(
+            graySrc,
+            dstMat,
+            127.0,
+            255.0,
+            Imgproc.THRESH_BINARY + Imgproc.THRESH_OTSU
+        )
         return dstMat
+    }
+
+    //thicc font
+    private suspend fun dilation(graySrc: Mat): Mat {
+        val mat = Mat()
+        Core.bitwise_not(graySrc, mat)
+        val kernal = Mat(2, 2, CvType.CV_8UC1, Scalar(1.0))
+        Imgproc.dilate(mat, mat, kernal, Point(-1.0, -1.0), 1)
+        Core.bitwise_not(mat, mat)
+        return mat
     }
 
     private suspend fun convertToBitmap(mat: Mat): Bitmap {
