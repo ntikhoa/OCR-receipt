@@ -21,13 +21,24 @@ class ProcessImgUseCase {
      * Rotation and deskewing (optional)
      */
 
+    suspend operator fun invoke(bitmap: Bitmap): Bitmap {
+        var mat = bitmapToMat(bitmap)
+        val grayMat = Mat()
+        Imgproc.cvtColor(mat, grayMat, Imgproc.COLOR_RGB2GRAY)
+        mat = division(grayMat)
+        mat = sharp(mat)
+        mat = binarization(mat)
+        mat = dilation(mat)
+        return convertToBitmap(mat)
+    }
+
     suspend operator fun invoke(mat: Mat): Bitmap {
 //        val mat = bitmapToMat(bitmap)
 
         val grayMat = Mat()
         Imgproc.cvtColor(mat, grayMat, Imgproc.COLOR_RGB2GRAY)
         var mat = division(grayMat)
-        //TODO: SHARP
+        mat = sharp(mat)
         mat = binarization(mat)
         mat = dilation(mat)
         return convertToBitmap(mat)
@@ -45,6 +56,17 @@ class ProcessImgUseCase {
         val mat = Mat()
         Imgproc.GaussianBlur(graySrc, mat, Size(95.0, 95.0), 0.0)
         Core.divide(graySrc, mat, mat, 255.0)
+        return mat
+    }
+
+    private suspend fun sharp(graySrc: Mat): Mat {
+        val radius = 5.0
+        val amount = 2.0
+
+        val mat = Mat()
+        val blurred = Mat()
+        Imgproc.GaussianBlur(graySrc, blurred, Size(0.0, 0.0), radius)
+        Core.addWeighted(graySrc, amount + 1, blurred, -amount, 0.0, mat)
         return mat
     }
 
@@ -97,39 +119,6 @@ class ProcessImgUseCase {
             Imgproc.contourArea(it).toString()
         })
         return Mat(graySrc, croppedRect)
-    }
-
-    private suspend fun removeShadow(mat: Mat): Mat {
-
-        val rgbPlanes = ArrayList<Mat>()
-        Core.split(mat, rgbPlanes)
-        val normPlanes = ArrayList<Mat>()
-        for (plane in rgbPlanes) {
-            val dilatedImg = Mat()
-            Imgproc.dilate(
-                plane, dilatedImg,
-                Imgproc.getStructuringElement(
-                    Imgproc.MORPH_CROSS, Size(7.0, 7.0)
-                )
-            )
-            val bgImg = Mat()
-            Imgproc.medianBlur(dilatedImg, bgImg, 21)
-            val absDiffMat = Mat()
-            Core.absdiff(plane, bgImg, absDiffMat)
-
-            val diffImg = Mat()
-            Core.subtract(
-                Mat(absDiffMat.rows(), absDiffMat.cols(), CvType.CV_8U, Scalar.all(255.0)),
-                absDiffMat,
-                diffImg
-            )
-            val normImg = Mat()
-            Core.normalize(diffImg, normImg, 0.0, 0.0, Core.NORM_MINMAX, CvType.CV_8UC1)
-            normPlanes.add(normImg)
-        }
-        val result = Mat()
-        Core.merge(normPlanes, result)
-        return result
     }
 }
 

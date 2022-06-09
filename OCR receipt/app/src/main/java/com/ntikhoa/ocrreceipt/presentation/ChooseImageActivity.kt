@@ -8,6 +8,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
+import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.net.toUri
@@ -53,31 +54,44 @@ class ChooseImageActivity : AppCompatActivity() {
                 takePhotoActivityResLauncher.launch(cameraIntent)
             }
 
-            btnProcessImage.setOnClickListener {
+            fabDummy.setOnClickListener {
                 CoroutineScope(Dispatchers.Main).launch {
-                    val mat = withContext(Dispatchers.IO) {
-                        Utils.loadResource(applicationContext, R.drawable.receipt2)
-                    }
-//                    val bitmap = withContext(Dispatchers.IO) {
-//                        lateinit var bitmap: Bitmap
-//                        if (Build.VERSION.SDK_INT < 28) {
-//                            bitmap = MediaStore.Images.Media.getBitmap(contentResolver, imageUri)
-//                        } else {
-//                            val source: ImageDecoder.Source =
-//                                ImageDecoder.createSource(contentResolver, imageUri!!)
-//                            bitmap = ImageDecoder.decodeBitmap(source)
-//                        }
-//                        bitmap
-//                    }
+                    binding.cvLoading.visibility = View.VISIBLE
 
+                    val mat = withContext(Dispatchers.IO) {
+                        Utils.loadResource(applicationContext, R.drawable.receipt_dark)
+                    }
                     val img = withContext(Dispatchers.Default) {
                         processImg(mat)
                     }
-//                    withContext(Dispatchers.IO) {
-//                        imageUri = getImageUri(applicationContext, img)
-//                    }
-
+                    imageUri = getImageUri(applicationContext, img)
                     binding.ivReceipt.setImageBitmap(img)
+                    binding.cvLoading.visibility = View.GONE
+                }
+            }
+
+            btnProcessImage.setOnClickListener {
+                CoroutineScope(Dispatchers.Main).launch {
+                    binding.cvLoading.visibility = View.VISIBLE
+
+                    val bitmap = withContext(Dispatchers.IO) {
+                        lateinit var bitmap: Bitmap
+                        if (Build.VERSION.SDK_INT < 28) {
+                            bitmap = MediaStore.Images.Media.getBitmap(contentResolver, imageUri)
+                        } else {
+                            val source: ImageDecoder.Source =
+                                ImageDecoder.createSource(contentResolver, imageUri!!)
+                            bitmap = ImageDecoder.decodeBitmap(source)
+                        }
+                        bitmap
+                    }
+
+                    val img = withContext(Dispatchers.Default) {
+                        processImg(bitmap)
+                    }
+                    imageUri = getImageUri(applicationContext, img)
+                    binding.ivReceipt.setImageBitmap(img)
+                    binding.cvLoading.visibility = View.GONE
                 }
             }
 
