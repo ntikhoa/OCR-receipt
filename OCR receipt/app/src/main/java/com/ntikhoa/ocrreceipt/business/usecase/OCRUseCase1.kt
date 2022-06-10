@@ -1,4 +1,4 @@
-package com.ntikhoa.ocrreceipt.business
+package com.ntikhoa.ocrreceipt.business.usecase
 
 import androidx.core.text.isDigitsOnly
 import com.google.mlkit.vision.text.Text

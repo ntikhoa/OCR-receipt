@@ -14,7 +14,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.net.toUri
 import com.ntikhoa.ocrreceipt.Constants
 import com.ntikhoa.ocrreceipt.R
-import com.ntikhoa.ocrreceipt.business.ProcessImgUseCase
+import com.ntikhoa.ocrreceipt.business.usecase.ProcessImgUseCase
 import com.ntikhoa.ocrreceipt.business.getOutputDir
 import com.ntikhoa.ocrreceipt.databinding.ActivityChooseImageBinding
 import kotlinx.coroutines.CoroutineScope

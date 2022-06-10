@@ -1,4 +1,4 @@
-package com.ntikhoa.ocrreceipt.business
+package com.ntikhoa.ocrreceipt.business.usecase
 
 import android.graphics.Bitmap
 import org.opencv.android.OpenCVLoader

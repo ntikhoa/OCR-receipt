@@ -10,4 +10,6 @@ object Constants {
     val REQUIRED_PERMISSIONS = arrayOf(Manifest.permission.CAMERA)
 
     const val EXTRA_IMAGE_URI = "extra_image_uri"
+
+    const val BASE_URL = "https://rpa-voucher-exchange.herokuapp.com"
 }

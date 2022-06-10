@@ -4,23 +4,18 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.widget.Toast
-import androidx.activity.result.ActivityResult
-import androidx.activity.result.ActivityResultCallback
-import androidx.activity.result.contract.ActivityResultContract
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.text.isDigitsOnly
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.text.TextRecognition
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions
 import com.ntikhoa.ocrreceipt.Constants
-import com.ntikhoa.ocrreceipt.business.OCRUseCase2
+import com.ntikhoa.ocrreceipt.business.usecase.OCRUseCase2
 import com.ntikhoa.ocrreceipt.databinding.ActivityMainBinding
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.io.FileNotFoundException
 import java.lang.Exception
 
 
