@@ -4,39 +4,46 @@ import androidx.core.text.isDigitsOnly
 import com.google.mlkit.vision.text.Text
 
 class OCRUseCase2 {
-    operator fun invoke(visionText: Text): String {
-        println(visionText.text)
-
+    suspend operator fun invoke(visionText: Text): String {
+        val textBlocksLeft = mutableListOf<Text.TextBlock>()
+        val textBlocksRight = mutableListOf<Text.TextBlock>()
+        val textBlocksMiddle = mutableListOf<Text.TextBlock>()
         val textBlocks = visionText.textBlocks
-        val croppedTextBlocks = croppedData(textBlocks)
-        val leftTextBlocks = removeRightData(croppedTextBlocks)
-        val productNames = getProductName(leftTextBlocks)
 
-        return productNames.reduce { acc, s ->
+        splitData(textBlocks, textBlocksLeft, textBlocksRight)
+        splitData(textBlocksRight, textBlocksMiddle, textBlocksRight)
+
+        val productName = getProductName(textBlocksLeft)
+        val prices = getProductPrices(textBlocksRight)
+
+        val pricesStr = prices.map {
+            it.toString()
+        }
+
+//        val textsLeft = textBlocksLeft.map {
+//            it.text
+//        }
+//        val textsRight = textBlocksRight.map {
+//            it.text
+//        }
+//        val textsMiddle = textBlocksMiddle.map {
+//            it.text
+//        }
+
+        return productName.reduce { acc, s ->
             acc + "\n" + s
-        }
+        } +
+                "\n\n" +
+                pricesStr.reduce { acc, s ->
+                    acc + "\n" + s
+                }
     }
 
-    private fun getProductName(textBlocks: List<Text.TextBlock>): List<String> {
-        val lines = textBlocks.flatMap {
-            it.text.split("\n")
-        }.toMutableList()
-
-        for (i in lines.indices.reversed()) {
-            var line = lines[i]
-            line = Regex("[^A-Za-z0-9]").replace(line, "")
-
-            if (line.isDigitsOnly()) {
-                lines.removeAt(i)
-            } else if (line.contains("KHUYEN") || lines.contains("MAI")) {
-                println(line)
-                lines.removeAt(i)
-            }
-        }
-        return lines
-    }
-
-    private fun removeRightData(textBlocks: List<Text.TextBlock>): List<Text.TextBlock> {
+    private fun splitData(
+        textBlocks: List<Text.TextBlock>,
+        textBlocksLeft: MutableList<Text.TextBlock>,
+        textBlocksRight: MutableList<Text.TextBlock>
+    ) {
         val sortedTextBlock = textBlocks.sortedBy {
             it.boundingBox!!.left
         }
@@ -51,47 +58,56 @@ class OCRUseCase2 {
 
         val maxDist = dist.maxOf { it }
         val maxDistIndex = dist.indexOf(maxDist) + 1
-        return sortedTextBlock.subList(0, maxDistIndex)
+
+        var textBlocksLeftTemp = sortedTextBlock.subList(0, maxDistIndex)
+        var textBlocksRightTemp = sortedTextBlock.subList(maxDistIndex, sortedTextBlock.size)
+
+        textBlocksLeftTemp = textBlocksLeftTemp.sortedBy {
+            it.boundingBox!!.top
+        }
+        textBlocksRightTemp = textBlocksRightTemp.sortedBy {
+            it.boundingBox!!.top
+        }
+
+        textBlocksLeft.clear()
+        textBlocksRight.clear()
+        textBlocksLeft.addAll(textBlocksLeftTemp)
+        textBlocksRight.addAll(textBlocksRightTemp)
     }
 
-    private fun croppedData(textBlocks: List<Text.TextBlock>): List<Text.TextBlock> {
-
-        val mapTextBlock = textBlocks.map {
-            it.text
+    private fun getProductName(textBlocks: List<Text.TextBlock>): MutableList<String> {
+        val lines = textBlocks.flatMap {
+            it.text.split("\n")
         }.toMutableList()
 
-        mapTextBlock.add("====--")
+        for (i in lines.indices.reversed()) {
+//            var line = lines[i]
+//            line = Regex("[^A-Za-z0-9]").replace(line, "")
 
-        var start = 0
-        var end = textBlocks.size
-
-        // flag for making sure start and end is only set one time
-        var startFlag = false
-        var endFlag = false
-        for (i in mapTextBlock.indices) {
-            val tempText = mapTextBlock[i]
-
-            if (!startFlag && tempText.contains("[*|=|:]([*|=|:])+".toRegex())) {
-                start = i + 1
-                startFlag = true
-                endFlag = false
-                continue
-            }
-            if (!endFlag) {
-                if (tempText.uppercase().contains("SO LUONG")
-                    || tempText.uppercase().contains("S0 LUONG")
-                    || tempText.uppercase().contains("MAT HANG")
-                    || tempText.uppercase().contains("PHUONG THUC")
-                    || tempText.uppercase().contains("THANH TOAN")
-                ) {
-                    if (i > start) {
-                        end = i
-                        endFlag = true
-                        continue
-                    }
-                }
+            if (lines[i].contains("[*|=|:]([*|=|:])+".toRegex())) {
+                lines.removeAt(i)
+            } else if (lines[i].isDigitsOnly()) {
+                lines.removeAt(i)
+            } else if (lines[i].contains("KHUYEN MAI")) {
+                lines.removeAt(i)
             }
         }
-        return textBlocks.subList(start, end)
+        return lines
+    }
+
+    private fun getProductPrices(textBlocks: List<Text.TextBlock>): MutableList<Int> {
+        val lines = textBlocks.flatMap {
+            it.text.split("\n")
+        }
+
+        val prices = mutableListOf<Int>()
+
+        for (text in lines) {
+            if (text.contains(".")) {
+                val priceStr = text.replace(".", "")
+                prices.add(priceStr.toInt())
+            }
+        }
+        return prices
     }
 }

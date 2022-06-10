@@ -25,10 +25,10 @@ class ProcessImgUseCase {
         var mat = bitmapToMat(bitmap)
         val grayMat = Mat()
         Imgproc.cvtColor(mat, grayMat, Imgproc.COLOR_RGB2GRAY)
-        mat = division(grayMat)
-        mat = sharp(mat)
-        mat = binarization(mat)
-        mat = dilation(mat)
+        division(grayMat,mat)
+        sharp(mat, mat)
+        binarization(mat, mat)
+        dilation(mat, mat)
         return convertToBitmap(mat)
     }
 
@@ -37,10 +37,10 @@ class ProcessImgUseCase {
 
         val grayMat = Mat()
         Imgproc.cvtColor(mat, grayMat, Imgproc.COLOR_RGB2GRAY)
-        var mat = division(grayMat)
-        mat = sharp(mat)
-        mat = binarization(mat)
-        mat = dilation(mat)
+        division(grayMat,mat)
+        sharp(mat, mat)
+        binarization(mat, mat)
+        dilation(mat, mat)
         return convertToBitmap(mat)
     }
 
@@ -52,73 +52,43 @@ class ProcessImgUseCase {
     }
 
     //remove shadow
-    private suspend fun division(graySrc: Mat): Mat {
-        val mat = Mat()
-        Imgproc.GaussianBlur(graySrc, mat, Size(95.0, 95.0), 0.0)
-        Core.divide(graySrc, mat, mat, 255.0)
-        return mat
+    private suspend fun division(graySrc: Mat, dst: Mat) {
+        Imgproc.GaussianBlur(graySrc, dst, Size(95.0, 95.0), 0.0)
+        Core.divide(graySrc, dst, dst, 255.0)
     }
 
-    private suspend fun sharp(graySrc: Mat): Mat {
+    private suspend fun sharp(graySrc: Mat, dst: Mat) {
         val radius = 5.0
         val amount = 2.0
 
-        val mat = Mat()
         val blurred = Mat()
         Imgproc.GaussianBlur(graySrc, blurred, Size(0.0, 0.0), radius)
-        Core.addWeighted(graySrc, amount + 1, blurred, -amount, 0.0, mat)
-        return mat
+        Core.addWeighted(graySrc, amount + 1, blurred, -amount, 0.0, dst)
     }
 
-    private suspend fun binarization(graySrc: Mat): Mat {
-        val dstMat = Mat()
+    private suspend fun binarization(graySrc: Mat, dst: Mat){
         //127.0
         Imgproc.threshold(
             graySrc,
-            dstMat,
+            dst,
             127.0,
             255.0,
             Imgproc.THRESH_BINARY + Imgproc.THRESH_OTSU
         )
-        return dstMat
     }
 
     //thicc font
-    private suspend fun dilation(graySrc: Mat): Mat {
-        val mat = Mat()
-        Core.bitwise_not(graySrc, mat)
-        val kernal = Mat(2, 2, CvType.CV_8UC1, Scalar(1.0))
-        Imgproc.dilate(mat, mat, kernal, Point(-1.0, -1.0), 1)
-        Core.bitwise_not(mat, mat)
-        return mat
+    private suspend fun dilation(graySrc: Mat,  dst: Mat) {
+        Core.bitwise_not(graySrc, dst)
+        val kernal = Mat(4, 4, CvType.CV_8UC1, Scalar(1.0))
+        Imgproc.dilate(dst, dst, kernal, Point(-1.0, -1.0), 1)
+        Core.bitwise_not(dst, dst)
     }
 
     private suspend fun convertToBitmap(mat: Mat): Bitmap {
         val bitmap = Bitmap.createBitmap(mat.width(), mat.height(), Bitmap.Config.ARGB_8888)
         Utils.matToBitmap(mat, bitmap)
         return bitmap
-    }
-
-    private suspend fun removeBorder(graySrc: Mat): Mat {
-        val contours = ArrayList<MatOfPoint>()
-        Imgproc.findContours(
-            graySrc,
-            contours,
-            Mat(),
-            Imgproc.RETR_EXTERNAL,
-            Imgproc.CHAIN_APPROX_SIMPLE
-        )
-        println(contours.joinToString {
-            Imgproc.contourArea(it).toString()
-        })
-        contours.sortByDescending {
-            Imgproc.contourArea(it)
-        }
-        val croppedRect = Imgproc.boundingRect(contours[0])
-        println(contours.joinToString {
-            Imgproc.contourArea(it).toString()
-        })
-        return Mat(graySrc, croppedRect)
     }
 }
 

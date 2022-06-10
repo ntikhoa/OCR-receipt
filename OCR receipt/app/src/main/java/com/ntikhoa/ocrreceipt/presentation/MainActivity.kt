@@ -16,6 +16,10 @@ import com.google.mlkit.vision.text.latin.TextRecognizerOptions
 import com.ntikhoa.ocrreceipt.Constants
 import com.ntikhoa.ocrreceipt.business.OCRUseCase2
 import com.ntikhoa.ocrreceipt.databinding.ActivityMainBinding
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.FileNotFoundException
 import java.lang.Exception
 
@@ -58,13 +62,19 @@ class MainActivity : AppCompatActivity() {
         recognizer.process(inputImage)
             .addOnSuccessListener { visionText ->
                 val ocr = OCRUseCase2()
-                val text = ocr(visionText)
-                val resText = "Processed OCR:\n" +
-                        text +
-                        "\n\n" +
-                        "Raw OCR:\n" +
-                        visionText.text
-                binding.tvOcrResult.text = resText
+
+                CoroutineScope(Dispatchers.Main).launch {
+                    val resText = withContext(Dispatchers.Default) {
+                        val text = ocr(visionText)
+                        "Processed OCR:\n" +
+                                text +
+                                "\n\n" +
+                                "Raw OCR:\n" +
+                                visionText.text
+                    }
+
+                    binding.tvOcrResult.text = resText
+                }
             }
             .addOnFailureListener { e ->
                 println(e.message)

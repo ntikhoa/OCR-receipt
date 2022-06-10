@@ -59,7 +59,7 @@ class ChooseImageActivity : AppCompatActivity() {
                     binding.cvLoading.visibility = View.VISIBLE
 
                     val mat = withContext(Dispatchers.IO) {
-                        Utils.loadResource(applicationContext, R.drawable.receipt_dark)
+                        Utils.loadResource(applicationContext, R.drawable.receipt2)
                     }
                     val img = withContext(Dispatchers.Default) {
                         processImg(mat)
