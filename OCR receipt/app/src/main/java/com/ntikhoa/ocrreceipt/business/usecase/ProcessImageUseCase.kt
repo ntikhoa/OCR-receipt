@@ -1,12 +1,19 @@
 package com.ntikhoa.ocrreceipt.business.usecase
 
 import android.graphics.Bitmap
+import com.ntikhoa.ocrreceipt.business.domain.utils.DataState
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 import org.opencv.android.OpenCVLoader
 import org.opencv.android.Utils
 import org.opencv.core.*
 import org.opencv.imgproc.Imgproc
+import kotlin.coroutines.ContinuationInterceptor
 
-class ProcessImgUseCase {
+class ProcessImageUseCase {
 
     //Init opencv library
     init {
@@ -21,27 +28,30 @@ class ProcessImgUseCase {
      * Rotation and deskewing (optional)
      */
 
-    suspend operator fun invoke(bitmap: Bitmap): Bitmap {
+    suspend operator fun invoke(bitmap: Bitmap): Flow<DataState<Bitmap>> = flow {
         var mat = bitmapToMat(bitmap)
         val grayMat = Mat()
         Imgproc.cvtColor(mat, grayMat, Imgproc.COLOR_RGB2GRAY)
-        division(grayMat,mat)
+        division(grayMat, mat)
         sharp(mat, mat)
         binarization(mat, mat)
         dilation(mat, mat)
-        return convertToBitmap(mat)
+        emit(DataState(data = convertToBitmap(mat)))
+    }.catch {
+        emit(handleUseCaseException(it))
     }
 
-    suspend operator fun invoke(mat: Mat): Bitmap {
+    suspend operator fun invoke(mat: Mat): Flow<DataState<Bitmap>> = flow {
 //        val mat = bitmapToMat(bitmap)
-
         val grayMat = Mat()
         Imgproc.cvtColor(mat, grayMat, Imgproc.COLOR_RGB2GRAY)
-        division(grayMat,mat)
+        division(grayMat, mat)
         sharp(mat, mat)
         binarization(mat, mat)
         dilation(mat, mat)
-        return convertToBitmap(mat)
+        emit(DataState(data = convertToBitmap(mat)))
+    }.catch {
+        emit(handleUseCaseException(it))
     }
 
     private suspend fun bitmapToMat(bitmap: Bitmap): Mat {
@@ -66,7 +76,7 @@ class ProcessImgUseCase {
         Core.addWeighted(graySrc, amount + 1, blurred, -amount, 0.0, dst)
     }
 
-    private suspend fun binarization(graySrc: Mat, dst: Mat){
+    private suspend fun binarization(graySrc: Mat, dst: Mat) {
         //127.0
         Imgproc.threshold(
             graySrc,
@@ -78,7 +88,7 @@ class ProcessImgUseCase {
     }
 
     //thicc font
-    private suspend fun dilation(graySrc: Mat,  dst: Mat) {
+    private suspend fun dilation(graySrc: Mat, dst: Mat) {
         Core.bitwise_not(graySrc, dst)
         val kernal = Mat(4, 4, CvType.CV_8UC1, Scalar(1.0))
         Imgproc.dilate(dst, dst, kernal, Point(-1.0, -1.0), 1)

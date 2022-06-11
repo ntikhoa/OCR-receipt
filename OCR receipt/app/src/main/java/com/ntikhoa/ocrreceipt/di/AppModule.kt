@@ -2,8 +2,7 @@ package com.ntikhoa.ocrreceipt.di
 
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
-import com.ntikhoa.ocrreceipt.Constants
-import dagger.Component
+import com.ntikhoa.ocrreceipt.business.domain.utils.Constants
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

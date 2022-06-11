@@ -19,7 +19,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.OCRReceipt">
         <activity
-            android:name=".presentation.ChooseImageActivity"
+            android:name=".presentation.chooseimage.ChooseImageActivity"
             android:exported="false" />
         <meta-data
             android:name="com.google.mlkit.vision.DEPENDENCIES"

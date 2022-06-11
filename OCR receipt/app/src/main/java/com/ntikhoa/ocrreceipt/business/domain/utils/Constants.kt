@@ -1,4 +1,4 @@
-package com.ntikhoa.ocrreceipt
+package com.ntikhoa.ocrreceipt.business.domain.utils
 
 import android.Manifest
 
@@ -12,4 +12,6 @@ object Constants {
     const val EXTRA_IMAGE_URI = "extra_image_uri"
 
     const val BASE_URL = "https://rpa-voucher-exchange.herokuapp.com"
+
+    const val UNKNOWN_ERROR = "Unknown Error"
 }

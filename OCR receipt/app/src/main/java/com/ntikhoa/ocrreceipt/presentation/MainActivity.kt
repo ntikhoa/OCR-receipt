@@ -9,9 +9,10 @@ import androidx.appcompat.app.AppCompatActivity
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.text.TextRecognition
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions
-import com.ntikhoa.ocrreceipt.Constants
+import com.ntikhoa.ocrreceipt.business.domain.utils.Constants
 import com.ntikhoa.ocrreceipt.business.usecase.OCRUseCase2
 import com.ntikhoa.ocrreceipt.databinding.ActivityMainBinding
+import com.ntikhoa.ocrreceipt.presentation.chooseimage.ChooseImageActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
