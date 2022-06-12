@@ -2,9 +2,15 @@ package com.ntikhoa.ocrreceipt.business.usecase
 
 import androidx.core.text.isDigitsOnly
 import com.google.mlkit.vision.text.Text
+import com.ntikhoa.ocrreceipt.business.domain.utils.DataState
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.flow
 
-class OCRUseCase2 {
-    suspend operator fun invoke(visionText: Text): String {
+class ExtractReceiptUC {
+    suspend operator fun invoke(visionText: Text): Flow<DataState<String>> = flow {
+        emit(DataState.loading())
+
         val textBlocksLeft = mutableListOf<Text.TextBlock>()
         val textBlocksRight = mutableListOf<Text.TextBlock>()
         val textBlocksMiddle = mutableListOf<Text.TextBlock>()
@@ -30,13 +36,15 @@ class OCRUseCase2 {
 //            it.text
 //        }
 
-        return productName.reduce { acc, s ->
+        emit(DataState(data = productName.reduce { acc, s ->
             acc + "\n" + s
         } +
                 "\n\n" +
                 pricesStr.reduce { acc, s ->
                     acc + "\n" + s
-                }
+                }))
+    }.catch {
+        emit(handleUseCaseException(it))
     }
 
     private fun splitData(

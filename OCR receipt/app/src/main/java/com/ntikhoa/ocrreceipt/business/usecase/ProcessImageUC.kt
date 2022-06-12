@@ -13,7 +13,7 @@ import org.opencv.core.*
 import org.opencv.imgproc.Imgproc
 import kotlin.coroutines.ContinuationInterceptor
 
-class ProcessImageUseCase {
+class ProcessImageUC {
 
     //Init opencv library
     init {
@@ -29,6 +29,8 @@ class ProcessImageUseCase {
      */
 
     suspend operator fun invoke(bitmap: Bitmap): Flow<DataState<Bitmap>> = flow {
+        emit(DataState.loading())
+
         var mat = bitmapToMat(bitmap)
         val grayMat = Mat()
         Imgproc.cvtColor(mat, grayMat, Imgproc.COLOR_RGB2GRAY)
@@ -42,7 +44,8 @@ class ProcessImageUseCase {
     }
 
     suspend operator fun invoke(mat: Mat): Flow<DataState<Bitmap>> = flow {
-//        val mat = bitmapToMat(bitmap)
+        emit(DataState.loading())
+
         val grayMat = Mat()
         Imgproc.cvtColor(mat, grayMat, Imgproc.COLOR_RGB2GRAY)
         division(grayMat, mat)

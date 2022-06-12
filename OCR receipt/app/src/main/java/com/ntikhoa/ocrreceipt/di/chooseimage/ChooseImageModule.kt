@@ -1,6 +1,6 @@
 package com.ntikhoa.ocrreceipt.di.chooseimage
 
-import com.ntikhoa.ocrreceipt.business.usecase.ProcessImageUseCase
+import com.ntikhoa.ocrreceipt.business.usecase.ProcessImageUC
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -13,8 +13,8 @@ object ChooseImageModule {
 
     @ActivityRetainedScoped
     @Provides
-    fun providesProcessImgUseCase(): ProcessImageUseCase {
-        return ProcessImageUseCase()
+    fun providesProcessImgUseCase(): ProcessImageUC {
+        return ProcessImageUC()
     }
 
 }

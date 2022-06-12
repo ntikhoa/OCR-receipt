@@ -14,14 +14,13 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.net.toUri
 import com.ntikhoa.ocrreceipt.business.domain.utils.Constants
 import com.ntikhoa.ocrreceipt.R
-import com.ntikhoa.ocrreceipt.business.usecase.ProcessImageUseCase
 import com.ntikhoa.ocrreceipt.business.getOutputDir
+import com.ntikhoa.ocrreceipt.business.repeatLifecycleFlow
 import com.ntikhoa.ocrreceipt.databinding.ActivityChooseImageBinding
 import com.ntikhoa.ocrreceipt.presentation.TakePhotoActivity
+import com.ntikhoa.ocrreceipt.presentation.setVisibility
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.collectLatest
 import org.opencv.android.Utils
 import java.io.File
 import java.io.FileOutputStream
@@ -36,8 +35,6 @@ class ChooseImageActivity : AppCompatActivity() {
 
     private var imageUri: Uri? = null
 
-    private val processImg = ProcessImageUseCase()
-
     private val viewModel by viewModels<ChooseImageViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -45,10 +42,14 @@ class ChooseImageActivity : AppCompatActivity() {
         _binding = ActivityChooseImageBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        viewModel.state.observe(this) { dataState ->
-            dataState.bitmap?.let {
-                imageUri = getImageUri(applicationContext, it)
-                binding.ivReceipt.setImageBitmap(it)
+        repeatLifecycleFlow {
+            viewModel.state.collectLatest { dataState ->
+                binding.cvLoading.setVisibility(dataState.isLoading)
+
+                dataState.bitmap?.let {
+                    imageUri = getImageUri(applicationContext, it)
+                    binding.ivReceipt.setImageBitmap(it)
+                }
             }
         }
 
@@ -67,23 +68,6 @@ class ChooseImageActivity : AppCompatActivity() {
             fabDummy.setOnClickListener {
                 val mat = Utils.loadResource(applicationContext, R.drawable.receipt2)
                 viewModel.onTriggerEvent(ChooseImageEvent.ProcessMatImageEvent(mat))
-
-//                CoroutineScope(Dispatchers.Main).launch {
-//                    val mat = Utils.loadResource(applicationContext, R.drawable.receipt2)
-//                    viewModel.onTriggerEvent(ChooseImageEvent.ProcessMatImageEvent)
-//
-//                    binding.cvLoading.visibility = View.VISIBLE
-//
-//                    val mat = withContext(Dispatchers.IO) {
-//                        Utils.loadResource(applicationContext, R.drawable.receipt2)
-//                    }
-//                    val img = withContext(Dispatchers.Default) {
-//                        processImg(mat)
-//                    }
-//                    //imageUri = getImageUri(applicationContext, img)
-//                    //binding.ivReceipt.setImageBitmap(img)
-//                    binding.cvLoading.visibility = View.GONE
-//                }
             }
 
             btnProcessImage.setOnClickListener {
@@ -96,30 +80,6 @@ class ChooseImageActivity : AppCompatActivity() {
                     bitmap = ImageDecoder.decodeBitmap(source)
                 }
                 viewModel.onTriggerEvent(ChooseImageEvent.ProcessBitmapImageEvent(bitmap))
-
-//                CoroutineScope(Dispatchers.Main).launch {
-//                binding.cvLoading.visibility = View.VISIBLE
-//
-//                val bitmap = withContext(Dispatchers.IO) {
-//                    lateinit var bitmap: Bitmap
-//                    if (Build.VERSION.SDK_INT < 28) {
-//                        bitmap = MediaStore.Images.Media.getBitmap(contentResolver, imageUri)
-//                    } else {
-//                        val source: ImageDecoder.Source =
-//                            ImageDecoder.createSource(contentResolver, imageUri!!)
-//                        bitmap = ImageDecoder.decodeBitmap(source)
-//                    }
-//                    bitmap
-//                }
-//
-//                val img = withContext(Dispatchers.Default) {
-//                    processImg(bitmap)
-//                }
-//                //imageUri = getImageUri(applicationContext, img)
-//                //binding.ivReceipt.setImageBitmap(img)
-//                binding.cvLoading.visibility = View.GONE
-//            }
-//        }
             }
 
 
