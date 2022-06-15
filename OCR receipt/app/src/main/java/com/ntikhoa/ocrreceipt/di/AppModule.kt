@@ -1,7 +1,11 @@
 package com.ntikhoa.ocrreceipt.di
 
+import android.app.Application
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import com.ntikhoa.ocrreceipt.business.datasource.datastore.AppDataStore
+import com.ntikhoa.ocrreceipt.business.datasource.datastore.AppDataStoreImpl
+import com.ntikhoa.ocrreceipt.business.datasource.network.auth.AuthService
 import com.ntikhoa.ocrreceipt.business.domain.utils.Constants
 import dagger.Module
 import dagger.Provides

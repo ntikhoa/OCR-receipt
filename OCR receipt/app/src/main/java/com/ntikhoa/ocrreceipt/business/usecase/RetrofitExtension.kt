@@ -1,11 +1,34 @@
 package com.ntikhoa.ocrreceipt.business.usecase
 
+import com.ntikhoa.ocrreceipt.business.datasource.network.GenericResponse
 import com.ntikhoa.ocrreceipt.business.domain.utils.Constants
 import com.ntikhoa.ocrreceipt.business.domain.utils.DataState
 import retrofit2.HttpException
+import retrofit2.Response
 import java.lang.Exception
 
-fun <T> handleUseCaseException(e: Throwable): DataState<T> {
+fun <T> handleUseCaseException(
+    e: Throwable,
+    errorHandler: (HttpException) -> DataState<T>
+): DataState<T> {
+    e.printStackTrace()
+    return when (e) {
+        is HttpException -> {
+            try {
+                errorHandler(e)
+            } catch (customException: Throwable) {
+                DataState(message = convertErrorBody(e))
+            }
+        }
+        else -> {
+            DataState(message = Constants.UNKNOWN_ERROR)
+        }
+    }
+}
+
+fun <T> handleUseCaseException(
+    e: Throwable
+): DataState<T> {
     e.printStackTrace()
     return when (e) {
         is HttpException -> {

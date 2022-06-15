@@ -1,8 +1,8 @@
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
-    id 'kotlin-kapt'
     id 'kotlin-parcelize'
+    id 'kotlin-kapt'
     id 'dagger.hilt.android.plugin'
 }
 
@@ -61,6 +61,8 @@ dependencies {
     implementation "androidx.camera:camera-lifecycle:${camerax_version}"
     // If you want to additionally use the CameraX View class
     implementation "androidx.camera:camera-view:${camerax_version}"
+    //Extension
+    implementation "androidx.camera:camera-extensions:${camerax_version}"
 
     implementation 'androidx.fragment:fragment-ktx:1.5.0-rc01'
 
@@ -68,8 +70,8 @@ dependencies {
     implementation 'com.quickbirdstudios:opencv-contrib:4.5.2'
 
     def hilt_version = "2.38.1"
-    implementation("com.google.dagger:hilt-android:$hilt_version")
-    kapt("com.google.dagger:hilt-android-compiler:$hilt_version")
+    implementation "com.google.dagger:hilt-android:$hilt_version"
+    kapt "com.google.dagger:hilt-android-compiler:$hilt_version"
 
     // Leak Canary
     def leak_canary_version = "2.7"
@@ -81,4 +83,8 @@ dependencies {
 
     def lifecycle_version = "2.4.1"
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version"
+
+    //data store
+    def datastore = "1.0.0"
+    implementation "androidx.datastore:datastore-preferences:$datastore"
 }

@@ -7,6 +7,8 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.*
+import androidx.camera.extensions.ExtensionMode
+import androidx.camera.extensions.ExtensionsManager
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -106,30 +108,61 @@ class TakePhotoActivity : AppCompatActivity() {
     }
 
     private fun startCamera() {
-        val cameraProviderFuture = ProcessCameraProvider.getInstance(this)
+        val cameraProviderFuture = ProcessCameraProvider.getInstance(applicationContext)
         cameraProviderFuture.addListener({
-
             cameraProvider = cameraProviderFuture.get()
 
-            val preview = Preview.Builder()
-                .build()
-            preview.setSurfaceProvider(binding.viewFinder.surfaceProvider)
+            val extensionsManagerFuture =
+                ExtensionsManager.getInstanceAsync(applicationContext, cameraProvider)
+            extensionsManagerFuture.addListener({
 
-            imageCapture = ImageCapture.Builder().build()
+                val extensionsManager = extensionsManagerFuture.get()
+                val preview = Preview.Builder()
+                    .build()
+                preview.setSurfaceProvider(binding.viewFinder.surfaceProvider)
 
-            val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
-            try {
-                cameraProvider.unbindAll()
-                cameraProvider.bindToLifecycle(
-                    this as LifecycleOwner, cameraSelector, preview, imageCapture
-                )
-            } catch (e: Exception) {
-                Toast.makeText(applicationContext, e.message, Toast.LENGTH_SHORT).show()
-            }
-        }, ContextCompat.getMainExecutor(this))
+                imageCapture = ImageCapture.Builder().build()
+                var cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
+
+                cameraSelector = setCameraMode(extensionsManager, cameraSelector, ExtensionMode.HDR)
+                cameraSelector =
+                    setCameraMode(extensionsManager, cameraSelector, ExtensionMode.NIGHT)
+
+                try {
+                    cameraProvider.unbindAll()
+                    cameraProvider.bindToLifecycle(
+                        this as LifecycleOwner, cameraSelector, preview, imageCapture
+                    )
+                } catch (e: Exception) {
+                    Toast.makeText(applicationContext, e.message, Toast.LENGTH_SHORT).show()
+                    println(e.message)
+                }
+
+            }, mainExecutor)
+        }, mainExecutor)
     }
 
-    private fun allPermissionGranted() =
+    private fun setCameraMode(
+        extensionsManager: ExtensionsManager,
+        cameraSelector: CameraSelector,
+        mode: Int
+    ): CameraSelector {
+        if (extensionsManager.isExtensionAvailable(
+                cameraSelector,
+                mode
+            )
+        ) {
+            cameraProvider.unbindAll()
+            // Retrieve extension enabled camera selector
+            return extensionsManager.getExtensionEnabledCameraSelector(
+                cameraSelector,
+                mode
+            )
+        }
+        return cameraSelector
+    }
+
+    fun allPermissionGranted() =
         Constants.REQUIRED_PERMISSIONS.all {
             ContextCompat.checkSelfPermission(
                 baseContext,
