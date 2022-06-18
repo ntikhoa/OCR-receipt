@@ -44,7 +44,7 @@ class ChooseImageActivity : AppCompatActivity() {
 
         repeatLifecycleFlow {
             viewModel.state.collectLatest { dataState ->
-                binding.cvLoading.setVisibility(dataState.isLoading)
+                binding.progressBar.setVisibility(dataState.isLoading)
 
                 dataState.bitmap?.let {
                     imageUri = getImageUri(applicationContext, it)

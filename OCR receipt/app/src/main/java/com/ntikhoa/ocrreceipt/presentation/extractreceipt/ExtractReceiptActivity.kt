@@ -43,6 +43,8 @@ class ExtractReceiptActivity : AppCompatActivity() {
 
         repeatLifecycleFlow {
             viewModel.state.collectLatest { dataState ->
+
+
                 dataState.text?.let {
                     binding.tvOcrResult.text = it
                 }

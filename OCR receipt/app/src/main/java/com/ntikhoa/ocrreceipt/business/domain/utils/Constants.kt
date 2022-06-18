@@ -16,4 +16,5 @@ object Constants {
     const val DATASTORE_VALUE_NOT_FOUND = "datastore_value_not_found"
     const val DATASTORE_TOKEN_KEY = "datastore_token_key"
     const val DATASTORE_NAME_KEY = "datastore_name_key"
+    const val INVALID_TOKEN = "invalid_token"
 }

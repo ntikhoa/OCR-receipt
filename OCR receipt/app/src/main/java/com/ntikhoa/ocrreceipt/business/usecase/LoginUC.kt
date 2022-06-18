@@ -26,7 +26,7 @@ class LoginUC(
                 val account = it.toAccount()
                 dataStore.setValue(Constants.DATASTORE_TOKEN_KEY, account.token)
                 dataStore.setValue(Constants.DATASTORE_NAME_KEY, account.name)
-                emit(DataState.data(data = account, message = response.message))
+                emit(DataState.data(data = account))
             }
 
         }.catch {

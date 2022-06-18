@@ -4,6 +4,7 @@ import android.app.Application
 import com.ntikhoa.ocrreceipt.business.datasource.datastore.AppDataStore
 import com.ntikhoa.ocrreceipt.business.datasource.datastore.AppDataStoreImpl
 import com.ntikhoa.ocrreceipt.business.datasource.network.auth.AuthService
+import com.ntikhoa.ocrreceipt.business.usecase.AutoLoginUC
 import com.ntikhoa.ocrreceipt.business.usecase.LoginUC
 
 import dagger.Module
@@ -31,10 +32,9 @@ object AuthModule {
         return retrofitBuilder.build().create(AuthService::class.java)
     }
 
-
     @Provides
     @ActivityRetainedScoped
-    fun providesAppDataStore(app: Application): AppDataStore {
-        return AppDataStoreImpl(app)
+    fun providesAutoLoginUC(dataStore: AppDataStore, authService: AuthService): AutoLoginUC {
+        return AutoLoginUC(dataStore, authService)
     }
 }

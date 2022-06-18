@@ -1,10 +1,7 @@
 package com.ntikhoa.ocrreceipt.business.datasource.network.auth
 
 import com.ntikhoa.ocrreceipt.business.datasource.network.GenericResponse
-import retrofit2.http.Body
-import retrofit2.http.Field
-import retrofit2.http.FormUrlEncoded
-import retrofit2.http.POST
+import retrofit2.http.*
 
 interface AuthService {
 
@@ -14,4 +11,9 @@ interface AuthService {
         @Field("username") username: String,
         @Field("password") password: String
     ): GenericResponse<LoginResponse>
+
+    @POST("api/v1/auth/auto_login")
+    suspend fun autoLogin(
+        @Header("Authorization") token: String
+    ): GenericResponse<Any?>
 }

@@ -21,9 +21,8 @@ class AppDataStoreImpl(
         }
     }
 
-    override suspend fun readValue(key: String): String {
+    override suspend fun readValue(key: String): String? {
         return context.dataStore.data.first()[stringPreferencesKey(key)]
-            ?: Constants.DATASTORE_VALUE_NOT_FOUND
     }
 
     override suspend fun clear() {

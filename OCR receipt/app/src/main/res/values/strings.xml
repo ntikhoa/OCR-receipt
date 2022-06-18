@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">OCR receipt</string>
+    <string name="btn_login">Đăng Nhập</string>
 </resources>

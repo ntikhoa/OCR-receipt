@@ -1,5 +1,6 @@
 package com.ntikhoa.ocrreceipt.business.usecase
 
+import android.text.TextUtils.isDigitsOnly
 import androidx.core.text.isDigitsOnly
 import com.google.mlkit.vision.text.Text
 import com.ntikhoa.ocrreceipt.business.domain.utils.DataState
@@ -15,6 +16,8 @@ class ExtractReceiptUC {
         val textBlocksRight = mutableListOf<Text.TextBlock>()
         val textBlocksMiddle = mutableListOf<Text.TextBlock>()
         val textBlocks = visionText.textBlocks
+        println("====ALL====")
+        println(visionText.text)
 
         splitData(textBlocks, textBlocksLeft, textBlocksRight)
         splitData(textBlocksRight, textBlocksMiddle, textBlocksRight)
@@ -42,7 +45,11 @@ class ExtractReceiptUC {
                 "\n\n" +
                 pricesStr.reduce { acc, s ->
                     acc + "\n" + s
-                }))
+                } +
+                "\n\n" +
+                "RawOCR:" +
+                "\n" +
+                visionText.text))
     }.catch {
         emit(handleUseCaseException(it))
     }
@@ -81,6 +88,15 @@ class ExtractReceiptUC {
         textBlocksRight.clear()
         textBlocksLeft.addAll(textBlocksLeftTemp)
         textBlocksRight.addAll(textBlocksRightTemp)
+
+        println("====LEFT====")
+        println(textBlocksLeft.map{
+            it.text
+        })
+        println("====RIGHT====")
+        println(textBlocksRight.map {
+            it.text
+        })
     }
 
     private fun getProductName(textBlocks: List<Text.TextBlock>): MutableList<String> {
@@ -89,31 +105,30 @@ class ExtractReceiptUC {
         }.toMutableList()
 
         for (i in lines.indices.reversed()) {
-//            var line = lines[i]
-//            line = Regex("[^A-Za-z0-9]").replace(line, "")
+            var line = lines[i]
+            line = line.uppercase()
 
             if (lines[i].contains("[*|=|:]([*|=|:])+".toRegex())) {
                 lines.removeAt(i)
-            } else if (lines[i].isDigitsOnly()) {
+            } else if (line.replace(".", "").trim().isDigitsOnly()) {
                 lines.removeAt(i)
-            } else if (lines[i].contains("KHUYEN MAI")) {
+            } else if (line.contains("KHUYEN MAI")) {
                 lines.removeAt(i)
             }
         }
         return lines
     }
 
-    private fun getProductPrices(textBlocks: List<Text.TextBlock>): MutableList<Int> {
+    private fun getProductPrices(textBlocks: List<Text.TextBlock>): MutableList<String> {
         val lines = textBlocks.flatMap {
             it.text.split("\n")
         }
 
-        val prices = mutableListOf<Int>()
+        val prices = mutableListOf<String>()
 
         for (text in lines) {
             if (text.contains(".")) {
-                val priceStr = text.replace(".", "")
-                prices.add(priceStr.toInt())
+                prices.add(text)
             }
         }
         return prices

@@ -77,19 +77,10 @@
         </LinearLayout>
     </LinearLayout>
 
-    <androidx.cardview.widget.CardView
-        android:id="@+id/cv_loading"
+    <ProgressBar
+        android:id="@+id/progress_bar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:visibility="gone"
-        app:cardCornerRadius="8dp"
-        app:cardElevation="8dp">
-
-        <ImageView
-            android:layout_width="200dp"
-            android:layout_height="150dp"
-            android:scaleType="centerCrop"
-            android:src="@drawable/please_wait" />
-    </androidx.cardview.widget.CardView>
+        android:visibility="gone"/>
 </FrameLayout>

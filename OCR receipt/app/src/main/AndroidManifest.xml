@@ -19,17 +19,20 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.OCRReceipt">
         <activity
-            android:name=".presentation.auth.LoginActivity"
+            android:name=".presentation.splash.SplashActivity"
             android:exported="true"
             android:screenOrientation="portrait">
-
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
         </activity>
+
+        <activity
+            android:name=".presentation.auth.LoginActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".presentation.chooseimage.ChooseImageActivity"
             android:exported="false"
@@ -46,13 +49,7 @@
         <activity
             android:name=".presentation.extractreceipt.ExtractReceiptActivity"
             android:exported="false"
-            android:screenOrientation="portrait">
-            <!--            <intent-filter>-->
-            <!--                <action android:name="android.intent.action.MAIN" />-->
-
-            <!--                <category android:name="android.intent.category.LAUNCHER" />-->
-            <!--            </intent-filter>-->
-        </activity>
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>

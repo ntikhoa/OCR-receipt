@@ -93,7 +93,8 @@ class ProcessImageUC {
     //thicc font
     private suspend fun dilation(graySrc: Mat, dst: Mat) {
         Core.bitwise_not(graySrc, dst)
-        val kernal = Mat(4, 4, CvType.CV_8UC1, Scalar(1.0))
+        //2, 2
+        val kernal = Mat(2, 2, CvType.CV_8UC1, Scalar(1.0))
         Imgproc.dilate(dst, dst, kernal, Point(-1.0, -1.0), 1)
         Core.bitwise_not(dst, dst)
     }
