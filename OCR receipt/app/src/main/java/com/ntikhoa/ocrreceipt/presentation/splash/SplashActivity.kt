@@ -10,6 +10,7 @@ import com.ntikhoa.ocrreceipt.business.repeatLifecycleFlow
 import com.ntikhoa.ocrreceipt.databinding.ActivitySplashBinding
 import com.ntikhoa.ocrreceipt.presentation.auth.LoginActivity
 import com.ntikhoa.ocrreceipt.presentation.chooseimage.ChooseImageActivity
+import com.ntikhoa.ocrreceipt.presentation.extractreceipt.ExtractReceiptActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 
@@ -31,7 +32,7 @@ class SplashActivity : AppCompatActivity() {
             viewModel.state.collectLatest {
                 when (it) {
                     is SplashState.AutoLoginSuccess -> {
-                        val mainIntent = Intent(applicationContext, ChooseImageActivity::class.java)
+                        val mainIntent = Intent(applicationContext, ExtractReceiptActivity::class.java)
                         startActivity(mainIntent)
                         finish()
                     }
@@ -50,6 +51,7 @@ class SplashActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
+        viewModel.cancelJobs()
         _binding = null
     }
 }

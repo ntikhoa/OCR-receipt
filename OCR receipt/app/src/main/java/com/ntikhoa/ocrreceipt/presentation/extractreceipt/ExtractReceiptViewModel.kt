@@ -7,12 +7,15 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.mlkit.vision.text.Text
+import com.ntikhoa.ocrreceipt.business.datasource.datastore.AppDataStore
 import com.ntikhoa.ocrreceipt.business.domain.utils.DataState
 import com.ntikhoa.ocrreceipt.business.usecase.ExtractReceiptUC
 import com.ntikhoa.ocrreceipt.business.usecase.OCRUseCase
 import com.ntikhoa.ocrreceipt.presentation.OnTriggerEvent
+import com.ntikhoa.ocrreceipt.presentation.SessionManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -28,6 +31,9 @@ constructor(
     private val _state = MutableStateFlow(ExtractReceiptState())
     val state get() = _state.asStateFlow()
 
+    private var extractReceiptJob: Job? = null
+    private var ocrJob: Job? = null
+
     override fun onTriggerEvent(event: ExtractReceiptEvent) {
         viewModelScope.launch {
             when (event) {
@@ -39,7 +45,8 @@ constructor(
     }
 
     private suspend fun extractReceipt(imageUri: Uri) {
-        ocr(imageUri)
+        ocrJob?.cancel()
+        ocrJob = ocr(imageUri)
             .onEach { dataState ->
                 val copiedState = _state.value.copy()
                 if (dataState.isLoading) {
@@ -55,7 +62,8 @@ constructor(
     }
 
     private suspend fun extractReceiptText(visionText: Text) {
-        extractReceiptUC(visionText)
+        extractReceiptJob?.cancel()
+        extractReceiptJob = extractReceiptUC(visionText)
             .onEach { dataState ->
                 val copiedState = _state.value.copy()
 
@@ -67,5 +75,15 @@ constructor(
                 _state.value = copiedState
             }.flowOn(Dispatchers.Default)
             .launchIn(viewModelScope)
+    }
+
+    fun cancelJobs() {
+        extractReceiptJob?.cancel()
+        ocrJob?.cancel()
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        cancelJobs()
     }
 }

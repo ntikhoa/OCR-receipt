@@ -9,6 +9,7 @@ import com.ntikhoa.ocrreceipt.business.usecase.ProcessImageUC
 import com.ntikhoa.ocrreceipt.presentation.OnTriggerEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import org.opencv.core.Mat
@@ -24,6 +25,8 @@ constructor(
     private val _state = MutableStateFlow(ChooseImageState())
     val state get() = _state.asStateFlow()
 
+    private var processImageJob: Job? = null
+
     override fun onTriggerEvent(event: ChooseImageEvent) {
         viewModelScope.launch {
             when (event) {
@@ -38,7 +41,8 @@ constructor(
     }
 
     private suspend fun processImage(mat: Mat) {
-        processImageUC(mat).onEach { dataState ->
+        processImageJob?.cancel()
+        processImageJob = processImageUC(mat).onEach { dataState ->
             val copiedState = _state.value.copy()
 
             copiedState.isLoading = dataState.isLoading
@@ -55,7 +59,8 @@ constructor(
     }
 
     private suspend fun processImage(bitmap: Bitmap) {
-        processImageUC(bitmap).onEach { dataState ->
+        processImageJob?.cancel()
+        processImageJob = processImageUC(bitmap).onEach { dataState ->
             val copiedState = _state.value.copy()
 
             copiedState.isLoading = dataState.isLoading
@@ -69,5 +74,14 @@ constructor(
             _state.value = copiedState
         }.flowOn(Dispatchers.Default)
             .launchIn(viewModelScope)
+    }
+
+    fun cancelJobs() {
+        processImageJob?.cancel()
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        cancelJobs()
     }
 }

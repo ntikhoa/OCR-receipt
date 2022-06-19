@@ -17,6 +17,7 @@ import com.ntikhoa.ocrreceipt.business.domain.utils.Constants
 import com.ntikhoa.ocrreceipt.business.repeatLifecycleFlow
 import com.ntikhoa.ocrreceipt.business.usecase.ExtractReceiptUC
 import com.ntikhoa.ocrreceipt.databinding.ActivityExtractReceiptBinding
+import com.ntikhoa.ocrreceipt.presentation.auth.LoginActivity
 import com.ntikhoa.ocrreceipt.presentation.chooseimage.ChooseImageActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
@@ -51,9 +52,17 @@ class ExtractReceiptActivity : AppCompatActivity() {
             }
         }
 
-        binding.btnChooseImage.setOnClickListener {
-            val chooseImageIntent = Intent(applicationContext, ChooseImageActivity::class.java)
-            chooseImageActivityResLauncher.launch(chooseImageIntent)
+        binding.apply {
+            btnChooseImage.setOnClickListener {
+                val chooseImageIntent = Intent(applicationContext, ChooseImageActivity::class.java)
+                chooseImageActivityResLauncher.launch(chooseImageIntent)
+            }
+
+            btnLogout.setOnClickListener {
+                val loginIntent = Intent(applicationContext, LoginActivity::class.java)
+                startActivity(loginIntent)
+                finish()
+            }
         }
     }
 
@@ -78,6 +87,7 @@ class ExtractReceiptActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
+        viewModel.cancelJobs()
         _binding = null
     }
 }

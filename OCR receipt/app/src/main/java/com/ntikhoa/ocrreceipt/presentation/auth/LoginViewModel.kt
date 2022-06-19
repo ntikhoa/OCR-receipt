@@ -8,6 +8,7 @@ import com.ntikhoa.ocrreceipt.presentation.OnTriggerEvent
 import com.ntikhoa.ocrreceipt.presentation.SessionManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -23,6 +24,8 @@ constructor(
     private val _state = MutableStateFlow<LoginState>(LoginState.None)
     val state get() = _state.asStateFlow()
 
+    private var loginJob: Job? = null
+
     override fun onTriggerEvent(event: LoginEvent) {
         viewModelScope.launch {
             when (event) {
@@ -34,7 +37,8 @@ constructor(
     }
 
     private suspend fun login(username: String, password: String) {
-        loginUC(username, password)
+        loginJob?.cancel()
+        loginJob = loginUC(username, password)
             .onEach { dataState ->
                 if (dataState.isLoading) {
                     _state.value = LoginState.Loading
@@ -57,5 +61,14 @@ constructor(
 
             }.flowOn(Dispatchers.IO)
             .launchIn(viewModelScope)
+    }
+
+    fun cancelJobs() {
+        loginJob?.cancel()
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        cancelJobs()
     }
 }
