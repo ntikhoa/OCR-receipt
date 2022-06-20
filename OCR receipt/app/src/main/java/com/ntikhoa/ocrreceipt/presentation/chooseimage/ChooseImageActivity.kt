@@ -1,6 +1,5 @@
 package com.ntikhoa.ocrreceipt.presentation.chooseimage
 
-import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.ImageDecoder
@@ -8,6 +7,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -47,8 +47,37 @@ class ChooseImageActivity : AppCompatActivity() {
                 binding.progressBar.setVisibility(dataState.isLoading)
 
                 dataState.bitmap?.let {
-                    imageUri = getImageUri(applicationContext, it)
+                    imageUri = getImageUri(it)
                     binding.ivReceipt.setImageBitmap(it)
+
+                    viewModel.onTriggerEvent(ChooseImageEvent.ExtractReceiptImage(it))
+                }
+            }
+        }
+
+        //scan combine by view model
+        repeatLifecycleFlow {
+            viewModel.anotherState.collectLatest { dataState ->
+                dataState.text?.let {
+                    println("===FINAL===")
+                    println(it)
+                }
+            }
+        }
+
+        //scan combine by UC
+        repeatLifecycleFlow {
+            viewModel.scanState.collectLatest { dataState ->
+
+                binding.progressBar.setVisibility(dataState.isLoading)
+
+                dataState.text?.let {
+                    println("===FINAL===")
+                    println(it)
+                }
+
+                dataState.message?.let {
+                    Toast.makeText(applicationContext, it, Toast.LENGTH_SHORT).show()
                 }
             }
         }
@@ -82,7 +111,6 @@ class ChooseImageActivity : AppCompatActivity() {
                 viewModel.onTriggerEvent(ChooseImageEvent.ProcessBitmapImageEvent(bitmap))
             }
 
-
             btnDone.setOnClickListener {
                 val resIntent = Intent()
                 resIntent.putExtra(Constants.EXTRA_IMAGE_URI, imageUri)
@@ -113,9 +141,21 @@ class ChooseImageActivity : AppCompatActivity() {
     private fun onGetImageRes(imageUri: Uri) {
         this.imageUri = imageUri
         binding.ivReceipt.setImageURI(imageUri)
+
+        //btnProcessImage
+        lateinit var bitmap: Bitmap
+        if (Build.VERSION.SDK_INT < 28) {
+            bitmap = MediaStore.Images.Media.getBitmap(contentResolver, imageUri)
+        } else {
+            val source: ImageDecoder.Source =
+                ImageDecoder.createSource(contentResolver, imageUri)
+            bitmap = ImageDecoder.decodeBitmap(source)
+        }
+//        viewModel.onTriggerEvent(ChooseImageEvent.ProcessBitmapImageEvent(bitmap))
+        viewModel.onTriggerEvent(ChooseImageEvent.ScanReceipt(bitmap))
     }
 
-    private fun getImageUri(inContext: Context, inImage: Bitmap): Uri? {
+    private fun getImageUri(image: Bitmap): Uri {
 
         val path = File(
             getOutputDir(),
@@ -126,7 +166,7 @@ class ChooseImageActivity : AppCompatActivity() {
         )
         try {
             val out = FileOutputStream(path)
-            inImage.compress(Bitmap.CompressFormat.JPEG, 100, out)
+            image.compress(Bitmap.CompressFormat.JPEG, 100, out)
             out.flush()
             out.close()
         } catch (e: Exception) {

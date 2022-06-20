@@ -1,11 +1,9 @@
 package com.ntikhoa.ocrreceipt.di.auth
 
-import android.app.Application
 import com.ntikhoa.ocrreceipt.business.datasource.datastore.AppDataStore
-import com.ntikhoa.ocrreceipt.business.datasource.datastore.AppDataStoreImpl
 import com.ntikhoa.ocrreceipt.business.datasource.network.auth.AuthService
-import com.ntikhoa.ocrreceipt.business.usecase.AutoLoginUC
-import com.ntikhoa.ocrreceipt.business.usecase.LoginUC
+import com.ntikhoa.ocrreceipt.business.usecase.auth.AutoLoginUC
+import com.ntikhoa.ocrreceipt.business.usecase.auth.LoginUC
 
 import dagger.Module
 import dagger.Provides
@@ -13,7 +11,6 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ActivityRetainedComponent
 import dagger.hilt.android.scopes.ActivityRetainedScoped
 import retrofit2.Retrofit
-import javax.inject.Singleton
 
 @Module
 @InstallIn(ActivityRetainedComponent::class)

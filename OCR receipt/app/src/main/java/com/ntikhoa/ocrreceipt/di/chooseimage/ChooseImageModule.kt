@@ -1,6 +1,8 @@
 package com.ntikhoa.ocrreceipt.di.chooseimage
 
-import com.ntikhoa.ocrreceipt.business.usecase.ProcessImageUC
+import com.ntikhoa.ocrreceipt.business.usecase.scanreceipt.ExtractReceiptUC
+import com.ntikhoa.ocrreceipt.business.usecase.scanreceipt.OCRUseCase
+import com.ntikhoa.ocrreceipt.business.usecase.scanreceipt.ProcessImageUC
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -16,5 +18,4 @@ object ChooseImageModule {
     fun providesProcessImgUseCase(): ProcessImageUC {
         return ProcessImageUC()
     }
-
 }

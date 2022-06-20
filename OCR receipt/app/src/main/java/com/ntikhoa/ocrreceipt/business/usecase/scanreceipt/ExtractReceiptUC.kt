@@ -1,17 +1,15 @@
-package com.ntikhoa.ocrreceipt.business.usecase
+package com.ntikhoa.ocrreceipt.business.usecase.scanreceipt
 
-import android.text.TextUtils.isDigitsOnly
 import androidx.core.text.isDigitsOnly
 import com.google.mlkit.vision.text.Text
 import com.ntikhoa.ocrreceipt.business.domain.utils.DataState
+import com.ntikhoa.ocrreceipt.business.usecase.handleUseCaseException
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 
 class ExtractReceiptUC {
     suspend operator fun invoke(visionText: Text): Flow<DataState<String>> = flow {
-        emit(DataState.loading())
-
         val textBlocksLeft = mutableListOf<Text.TextBlock>()
         val textBlocksRight = mutableListOf<Text.TextBlock>()
         val textBlocksMiddle = mutableListOf<Text.TextBlock>()
@@ -25,25 +23,11 @@ class ExtractReceiptUC {
         val productName = getProductName(textBlocksLeft)
         val prices = getProductPrices(textBlocksRight)
 
-        val pricesStr = prices.map {
-            it.toString()
-        }
-
-//        val textsLeft = textBlocksLeft.map {
-//            it.text
-//        }
-//        val textsRight = textBlocksRight.map {
-//            it.text
-//        }
-//        val textsMiddle = textBlocksMiddle.map {
-//            it.text
-//        }
-
         emit(DataState(data = productName.reduce { acc, s ->
             acc + "\n" + s
         } +
                 "\n\n" +
-                pricesStr.reduce { acc, s ->
+                prices.reduce { acc, s ->
                     acc + "\n" + s
                 } +
                 "\n\n" +
@@ -90,7 +74,7 @@ class ExtractReceiptUC {
         textBlocksRight.addAll(textBlocksRightTemp)
 
         println("====LEFT====")
-        println(textBlocksLeft.map{
+        println(textBlocksLeft.map {
             it.text
         })
         println("====RIGHT====")
