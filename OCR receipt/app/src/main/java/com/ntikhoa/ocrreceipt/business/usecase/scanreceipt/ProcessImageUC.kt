@@ -1,17 +1,15 @@
-package com.ntikhoa.ocrreceipt.business.usecase
+package com.ntikhoa.ocrreceipt.business.usecase.scanreceipt
 
 import android.graphics.Bitmap
 import com.ntikhoa.ocrreceipt.business.domain.utils.DataState
-import kotlinx.coroutines.Dispatchers
+import com.ntikhoa.ocrreceipt.business.usecase.handleUseCaseException
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOn
 import org.opencv.android.OpenCVLoader
 import org.opencv.android.Utils
 import org.opencv.core.*
 import org.opencv.imgproc.Imgproc
-import kotlin.coroutines.ContinuationInterceptor
 
 class ProcessImageUC {
 
@@ -105,25 +103,3 @@ class ProcessImageUC {
         return bitmap
     }
 }
-
-//fun cc() {
-//    val matFirst = Mat()
-//    Core.multiply(graySrc, Scalar(1.5 + 1), matFirst)
-//    val matSecond = Mat()
-//    Core.multiply(smooth, Scalar(-1.5), matSecond)
-//    Core.add(matFirst, matSecond, mat)
-//    for (i in 0 until mat.rows()) {
-//        for (j in 0 until mat.cols()) {
-//            if (mat.get(i, j)[0] < 0) {
-//                mat.get(i, j)[0] = 0.0
-//            }
-//        }
-//    }
-//    for (i in 0 until mat.rows()) {
-//        for (j in 0 until mat.cols()) {
-//            if (mat.get(i, j)[0] > 255) {
-//                mat.get(i, j)[0] = 255.0
-//            }
-//        }
-//    }
-//}

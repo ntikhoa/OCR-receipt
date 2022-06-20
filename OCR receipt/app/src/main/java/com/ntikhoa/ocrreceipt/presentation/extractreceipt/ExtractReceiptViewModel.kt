@@ -1,18 +1,12 @@
 package com.ntikhoa.ocrreceipt.presentation.extractreceipt
 
-import android.content.Context
 import android.net.Uri
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.mlkit.vision.text.Text
-import com.ntikhoa.ocrreceipt.business.datasource.datastore.AppDataStore
-import com.ntikhoa.ocrreceipt.business.domain.utils.DataState
-import com.ntikhoa.ocrreceipt.business.usecase.ExtractReceiptUC
-import com.ntikhoa.ocrreceipt.business.usecase.OCRUseCase
+import com.ntikhoa.ocrreceipt.business.usecase.scanreceipt.ExtractReceiptUC
+import com.ntikhoa.ocrreceipt.business.usecase.scanreceipt.OCRUseCase
 import com.ntikhoa.ocrreceipt.presentation.OnTriggerEvent
-import com.ntikhoa.ocrreceipt.presentation.SessionManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -46,6 +40,7 @@ constructor(
 
     private suspend fun extractReceipt(imageUri: Uri) {
         ocrJob?.cancel()
+        ocr(imageUri)
         ocrJob = ocr(imageUri)
             .onEach { dataState ->
                 val copiedState = _state.value.copy()

@@ -3,7 +3,7 @@ package com.ntikhoa.ocrreceipt.presentation.auth
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ntikhoa.ocrreceipt.business.domain.utils.Constants
-import com.ntikhoa.ocrreceipt.business.usecase.LoginUC
+import com.ntikhoa.ocrreceipt.business.usecase.auth.LoginUC
 import com.ntikhoa.ocrreceipt.presentation.OnTriggerEvent
 import com.ntikhoa.ocrreceipt.presentation.SessionManager
 import dagger.hilt.android.lifecycle.HiltViewModel

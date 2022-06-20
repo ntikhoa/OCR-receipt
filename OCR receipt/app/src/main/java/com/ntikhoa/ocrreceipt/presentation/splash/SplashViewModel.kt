@@ -2,8 +2,7 @@ package com.ntikhoa.ocrreceipt.presentation.splash
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.ntikhoa.ocrreceipt.business.datasource.datastore.AppDataStore
-import com.ntikhoa.ocrreceipt.business.usecase.AutoLoginUC
+import com.ntikhoa.ocrreceipt.business.usecase.auth.AutoLoginUC
 import com.ntikhoa.ocrreceipt.presentation.OnTriggerEvent
 import com.ntikhoa.ocrreceipt.presentation.SessionManager
 import dagger.hilt.android.lifecycle.HiltViewModel

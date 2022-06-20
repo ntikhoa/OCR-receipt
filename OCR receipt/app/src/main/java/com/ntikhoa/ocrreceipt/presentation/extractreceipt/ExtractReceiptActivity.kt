@@ -7,27 +7,14 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
-import com.google.mlkit.vision.common.InputImage
-import com.google.mlkit.vision.text.TextRecognition
-import com.google.mlkit.vision.text.latin.TextRecognizerOptions
 import com.ntikhoa.ocrreceipt.business.domain.utils.Constants
 import com.ntikhoa.ocrreceipt.business.repeatLifecycleFlow
-import com.ntikhoa.ocrreceipt.business.usecase.ExtractReceiptUC
 import com.ntikhoa.ocrreceipt.databinding.ActivityExtractReceiptBinding
 import com.ntikhoa.ocrreceipt.presentation.auth.LoginActivity
 import com.ntikhoa.ocrreceipt.presentation.chooseimage.ChooseImageActivity
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import java.lang.Exception
-import kotlin.coroutines.suspendCoroutine
 
 @AndroidEntryPoint
 class ExtractReceiptActivity : AppCompatActivity() {

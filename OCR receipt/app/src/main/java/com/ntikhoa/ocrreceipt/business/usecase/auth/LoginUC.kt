@@ -1,17 +1,14 @@
-package com.ntikhoa.ocrreceipt.business.usecase
+package com.ntikhoa.ocrreceipt.business.usecase.auth
 
-import com.google.gson.Gson
 import com.ntikhoa.ocrreceipt.business.datasource.datastore.AppDataStore
-import com.ntikhoa.ocrreceipt.business.datasource.network.GenericResponse
 import com.ntikhoa.ocrreceipt.business.datasource.network.auth.AuthService
 import com.ntikhoa.ocrreceipt.business.domain.model.Account
 import com.ntikhoa.ocrreceipt.business.domain.utils.Constants
 import com.ntikhoa.ocrreceipt.business.domain.utils.DataState
+import com.ntikhoa.ocrreceipt.business.usecase.handleUseCaseException
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
-import retrofit2.HttpException
-import retrofit2.Response
 
 class LoginUC(
     private val service: AuthService,
@@ -28,7 +25,6 @@ class LoginUC(
                 dataStore.setValue(Constants.DATASTORE_NAME_KEY, account.name)
                 emit(DataState.data(data = account))
             }
-
         }.catch {
             emit(handleUseCaseException(it))
         }

@@ -1,8 +1,8 @@
 package com.ntikhoa.ocrreceipt.di.extractreceipt
 
 import android.content.Context
-import com.ntikhoa.ocrreceipt.business.usecase.OCRUseCase
-import com.ntikhoa.ocrreceipt.business.usecase.ExtractReceiptUC
+import com.ntikhoa.ocrreceipt.business.usecase.scanreceipt.OCRUseCase
+import com.ntikhoa.ocrreceipt.business.usecase.scanreceipt.ExtractReceiptUC
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
