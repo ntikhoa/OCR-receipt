@@ -9,6 +9,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.ntikhoa.ocrreceipt.business.repeatLifecycleFlow
 import com.ntikhoa.ocrreceipt.databinding.ActivityLoginBinding
 import com.ntikhoa.ocrreceipt.presentation.extractreceipt.ExtractReceiptActivity
+import com.ntikhoa.ocrreceipt.presentation.home.HomeActivity
 import com.ntikhoa.ocrreceipt.presentation.setVisibility
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
@@ -44,7 +45,7 @@ class LoginActivity : AppCompatActivity() {
 
                 when (it) {
                     is LoginState.LoginSuccess -> {
-                        val intent = Intent(applicationContext, ExtractReceiptActivity::class.java)
+                        val intent = Intent(applicationContext, HomeActivity::class.java)
                         startActivity(intent)
                         finish()
                     }

@@ -11,6 +11,7 @@ import com.ntikhoa.ocrreceipt.databinding.ActivitySplashBinding
 import com.ntikhoa.ocrreceipt.presentation.auth.LoginActivity
 import com.ntikhoa.ocrreceipt.presentation.chooseimage.ChooseImageActivity
 import com.ntikhoa.ocrreceipt.presentation.extractreceipt.ExtractReceiptActivity
+import com.ntikhoa.ocrreceipt.presentation.home.HomeActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 
@@ -32,7 +33,7 @@ class SplashActivity : AppCompatActivity() {
             viewModel.state.collectLatest {
                 when (it) {
                     is SplashState.AutoLoginSuccess -> {
-                        val mainIntent = Intent(applicationContext, ExtractReceiptActivity::class.java)
+                        val mainIntent = Intent(applicationContext, HomeActivity::class.java)
                         startActivity(mainIntent)
                         finish()
                     }
