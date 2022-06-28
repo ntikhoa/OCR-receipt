@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="login_corner_radius">5dp</dimen>
+    <dimen name="home_corner_radius">10dp</dimen>
+    <dimen name="home_card_size">121dp</dimen>
+    <dimen name="home_half_card_size">60.5dp</dimen>
 </resources>
