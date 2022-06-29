@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/exchange_voucher_nav_graph"
+    app:startDestination="@id/takePhotoFragment">
+
+    <fragment
+        android:id="@+id/takePhotoFragment"
+        android:name="com.ntikhoa.ocrreceipt.presentation.exchangevoucher.takephoto.TakePhotoFragment"
+        android:label="fragment_take_photo"
+        tools:layout="@layout/fragment_take_photo" />
+</navigation>

@@ -1,21 +1,27 @@
-package com.ntikhoa.ocrreceipt.presentation
+package com.ntikhoa.ocrreceipt.presentation.exchangevoucher.takephoto
 
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
+import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.camera.core.*
+import androidx.camera.core.CameraSelector
+import androidx.camera.core.ImageCapture
+import androidx.camera.core.ImageCaptureException
+import androidx.camera.core.Preview
 import androidx.camera.extensions.ExtensionMode
 import androidx.camera.extensions.ExtensionsManager
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.LifecycleOwner
+import com.ntikhoa.ocrreceipt.R
 import com.ntikhoa.ocrreceipt.business.domain.utils.Constants
 import com.ntikhoa.ocrreceipt.business.getOutputDir
-import com.ntikhoa.ocrreceipt.databinding.ActivityTakePhotoBinding
+import com.ntikhoa.ocrreceipt.databinding.FragmentTakePhotoBinding
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
@@ -23,9 +29,9 @@ import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
 
-class TakePhotoActivity : AppCompatActivity() {
+class TakePhotoFragment : Fragment(R.layout.fragment_take_photo) {
 
-    private var _binding: ActivityTakePhotoBinding? = null
+    private var _binding: FragmentTakePhotoBinding? = null
     private val binding get() = _binding!!
 
     private var imageCapture: ImageCapture? = null
@@ -33,25 +39,34 @@ class TakePhotoActivity : AppCompatActivity() {
     private lateinit var outputDir: File
     private lateinit var cameraProvider: ProcessCameraProvider
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        _binding = ActivityTakePhotoBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        _binding = FragmentTakePhotoBinding.bind(view)
 
         cameraExecutor = Executors.newSingleThreadExecutor()
-        outputDir = getOutputDir()
+        outputDir = requireActivity().getOutputDir()
 
         if (allPermissionGranted()) {
             startCamera()
         } else {
             ActivityCompat.requestPermissions(
-                this, Constants.REQUIRED_PERMISSIONS,
+                requireActivity(), Constants.REQUIRED_PERMISSIONS,
                 Constants.REQUEST_CODE_PERMISSIONS
             )
         }
 
-        binding.btnTakePhoto.setOnClickListener {
-            takePhoto()
+        binding.apply {
+            btnBack.setOnClickListener {
+                requireActivity().onBackPressed()
+            }
+
+            btnTakePhoto.setOnClickListener {
+                takePhoto()
+            }
+
+            fabDev.setOnClickListener {
+                Toast.makeText(requireContext(), "DEV SECRET BTN", Toast.LENGTH_SHORT).show()
+            }
         }
     }
 
@@ -72,48 +87,33 @@ class TakePhotoActivity : AppCompatActivity() {
             .build()
 
         imageCapture.takePicture(outputOption,
-            ContextCompat.getMainExecutor(this),
+            ContextCompat.getMainExecutor(requireContext()),
             object : ImageCapture.OnImageSavedCallback {
                 override fun onImageSaved(outputFileResults: ImageCapture.OutputFileResults) {
-                    runOnUiThread {
+                    requireActivity().runOnUiThread {
                         cameraProvider.unbindAll()
                         val savedUri = Uri.fromFile(photoFile)
                         val resultIntent = Intent()
                         resultIntent.putExtra(Constants.EXTRA_IMAGE_URI, savedUri)
-                        setResult(RESULT_OK, resultIntent)
-                        finish()
+                        //TODO Add Navigation
+//                        setResult(AppCompatActivity.RESULT_OK, resultIntent)
+//                        finish()
                     }
                 }
 
                 override fun onError(exception: ImageCaptureException) {
-                    Toast.makeText(applicationContext, exception.message, Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), exception.message, Toast.LENGTH_SHORT).show()
                 }
             })
     }
 
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<String>,
-        grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == Constants.REQUEST_CODE_PERMISSIONS) {
-            if (allPermissionGranted()) {
-                startCamera()
-            } else {
-                Toast.makeText(this, "Permissions not granted", Toast.LENGTH_SHORT).show()
-                finish()
-            }
-        }
-    }
-
     private fun startCamera() {
-        val cameraProviderFuture = ProcessCameraProvider.getInstance(applicationContext)
+        val cameraProviderFuture = ProcessCameraProvider.getInstance(requireContext())
         cameraProviderFuture.addListener({
             cameraProvider = cameraProviderFuture.get()
 
             val extensionsManagerFuture =
-                ExtensionsManager.getInstanceAsync(applicationContext, cameraProvider)
+                ExtensionsManager.getInstanceAsync(requireContext(), cameraProvider)
             extensionsManagerFuture.addListener({
 
                 val extensionsManager = extensionsManagerFuture.get()
@@ -134,12 +134,12 @@ class TakePhotoActivity : AppCompatActivity() {
                         this as LifecycleOwner, cameraSelector, preview, imageCapture
                     )
                 } catch (e: Exception) {
-                    Toast.makeText(applicationContext, e.message, Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), e.message, Toast.LENGTH_SHORT).show()
                     println(e.message)
                 }
 
-            }, mainExecutor)
-        }, mainExecutor)
+            }, requireActivity().mainExecutor)
+        }, requireActivity().mainExecutor)
     }
 
     private fun setCameraMode(
@@ -162,17 +162,16 @@ class TakePhotoActivity : AppCompatActivity() {
         return cameraSelector
     }
 
-    private fun allPermissionGranted() =
+    fun allPermissionGranted() =
         Constants.REQUIRED_PERMISSIONS.all {
             ContextCompat.checkSelfPermission(
-                baseContext,
+                requireContext(),
                 it
             ) == PackageManager.PERMISSION_GRANTED
         }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        cameraExecutor.shutdown()
+    override fun onDestroyView() {
+        super.onDestroyView()
         _binding = null
     }
 }

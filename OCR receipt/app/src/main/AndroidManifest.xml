@@ -19,9 +19,13 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.OCRReceipt">
         <activity
+            android:name=".presentation.exchangevoucher.ExchangeVoucherActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+        <activity
             android:name=".presentation.home.HomeActivity"
-            android:screenOrientation="portrait"
-            android:exported="false" />
+            android:exported="false"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".presentation.splash.SplashActivity"
             android:exported="true"
