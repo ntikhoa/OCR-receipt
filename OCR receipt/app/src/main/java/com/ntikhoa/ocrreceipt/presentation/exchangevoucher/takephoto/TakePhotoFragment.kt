@@ -1,34 +1,34 @@
 package com.ntikhoa.ocrreceipt.presentation.exchangevoucher.takephoto
 
-import android.content.Intent
 import android.content.pm.PackageManager
-import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
-import androidx.camera.core.CameraSelector
+import androidx.camera.core.*
 import androidx.camera.core.ImageCapture
-import androidx.camera.core.ImageCaptureException
-import androidx.camera.core.Preview
 import androidx.camera.extensions.ExtensionMode
 import androidx.camera.extensions.ExtensionsManager
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.LifecycleOwner
+import androidx.navigation.fragment.findNavController
 import com.ntikhoa.ocrreceipt.R
 import com.ntikhoa.ocrreceipt.business.domain.utils.Constants
 import com.ntikhoa.ocrreceipt.business.getOutputDir
+import com.ntikhoa.ocrreceipt.business.imageProxyToBitmap
 import com.ntikhoa.ocrreceipt.databinding.FragmentTakePhotoBinding
+import com.ntikhoa.ocrreceipt.presentation.exchangevoucher.ExchangeVoucherViewModel
+import dagger.hilt.android.AndroidEntryPoint
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
-
+@AndroidEntryPoint
 class TakePhotoFragment : Fragment(R.layout.fragment_take_photo) {
 
     private var _binding: FragmentTakePhotoBinding? = null
@@ -38,6 +38,8 @@ class TakePhotoFragment : Fragment(R.layout.fragment_take_photo) {
     private lateinit var cameraExecutor: ExecutorService
     private lateinit var outputDir: File
     private lateinit var cameraProvider: ProcessCameraProvider
+
+    private val viewModel by activityViewModels<ExchangeVoucherViewModel>()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -86,25 +88,37 @@ class TakePhotoFragment : Fragment(R.layout.fragment_take_photo) {
             .Builder(photoFile)
             .build()
 
-        imageCapture.takePicture(outputOption,
-            ContextCompat.getMainExecutor(requireContext()),
-            object : ImageCapture.OnImageSavedCallback {
-                override fun onImageSaved(outputFileResults: ImageCapture.OutputFileResults) {
-                    requireActivity().runOnUiThread {
-                        cameraProvider.unbindAll()
-                        val savedUri = Uri.fromFile(photoFile)
-                        val resultIntent = Intent()
-                        resultIntent.putExtra(Constants.EXTRA_IMAGE_URI, savedUri)
-                        //TODO Add Navigation
-//                        setResult(AppCompatActivity.RESULT_OK, resultIntent)
-//                        finish()
-                    }
-                }
-
-                override fun onError(exception: ImageCaptureException) {
-                    Toast.makeText(requireContext(), exception.message, Toast.LENGTH_SHORT).show()
+        imageCapture.takePicture(
+            requireActivity().mainExecutor,
+            object : ImageCapture.OnImageCapturedCallback() {
+                override fun onCaptureSuccess(image: ImageProxy) {
+                    super.onCaptureSuccess(image)
+                    cameraProvider.unbindAll()
+                    val bitmap = imageProxyToBitmap(image)
+                    viewModel.bitmap = bitmap
+                    findNavController().navigate(R.id.action_takePhotoFragment_to_cropImageFragment)
                 }
             })
+
+//        imageCapture.takePicture(outputOption,
+//            ContextCompat.getMainExecutor(requireContext()),
+//            object : ImageCapture.OnImageSavedCallback {
+//                override fun onImageSaved(outputFileResults: ImageCapture.OutputFileResults) {
+//                    requireActivity().runOnUiThread {
+//                        cameraProvider.unbindAll()
+//                        val savedUri = Uri.fromFile(photoFile)
+//                        val resultIntent = Intent()
+//                        resultIntent.putExtra(Constants.EXTRA_IMAGE_URI, savedUri)
+//                        //TODO Add Navigation
+////                        setResult(AppCompatActivity.RESULT_OK, resultIntent)
+////                        finish()
+//                    }
+//                }
+//
+//                override fun onError(exception: ImageCaptureException) {
+//                    Toast.makeText(requireContext(), exception.message, Toast.LENGTH_SHORT).show()
+//                }
+//            })
     }
 
     private fun startCamera() {

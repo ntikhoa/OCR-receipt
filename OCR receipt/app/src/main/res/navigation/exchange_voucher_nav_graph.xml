@@ -9,5 +9,31 @@
         android:id="@+id/takePhotoFragment"
         android:name="com.ntikhoa.ocrreceipt.presentation.exchangevoucher.takephoto.TakePhotoFragment"
         android:label="fragment_take_photo"
-        tools:layout="@layout/fragment_take_photo" />
+        tools:layout="@layout/fragment_take_photo">
+        <action
+            android:id="@+id/action_takePhotoFragment_to_cropImageFragment"
+            app:destination="@id/cropImageFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+    </fragment>
+    <fragment
+        android:id="@+id/editReceiptFragment"
+        android:name="com.ntikhoa.ocrreceipt.presentation.exchangevoucher.editreceipt.EditReceiptFragment"
+        android:label="fragment_edit_receipt"
+        tools:layout="@layout/fragment_edit_receipt" />
+    <fragment
+        android:id="@+id/cropImageFragment"
+        android:name="com.ntikhoa.ocrreceipt.presentation.exchangevoucher.cropimage.CropImageFragment"
+        android:label="fragment_crop_image"
+        tools:layout="@layout/fragment_crop_image">
+        <action
+            android:id="@+id/action_cropImageFragment_to_editReceiptFragment"
+            app:destination="@id/editReceiptFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+    </fragment>
 </navigation>

@@ -3,6 +3,7 @@ package com.ntikhoa.ocrreceipt.business
 import android.app.Activity
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Matrix
 import androidx.activity.ComponentActivity
 import androidx.camera.core.ImageProxy
 import androidx.lifecycle.Lifecycle
@@ -10,8 +11,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.ntikhoa.ocrreceipt.R
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import org.opencv.android.Utils
 import org.opencv.core.Mat
@@ -29,7 +28,17 @@ fun imageProxyToBitmap(image: ImageProxy): Bitmap {
     val buffer: ByteBuffer = planeProxy.buffer
     val bytes = ByteArray(buffer.remaining())
     buffer.get(bytes)
-    return BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
+
+    val bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
+    return Bitmap.createBitmap(
+        bitmap,
+        0,
+        0,
+        bitmap.width,
+        bitmap.height,
+        Matrix().apply { postRotate(image.imageInfo.rotationDegrees.toFloat()) },
+        true
+    )
 }
 
 fun Activity.getOutputDir(): File {
