@@ -5,12 +5,9 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.activity.viewModels
-import com.ntikhoa.ocrreceipt.R
 import com.ntikhoa.ocrreceipt.business.repeatLifecycleFlow
 import com.ntikhoa.ocrreceipt.databinding.ActivitySplashBinding
 import com.ntikhoa.ocrreceipt.presentation.auth.LoginActivity
-import com.ntikhoa.ocrreceipt.presentation.chooseimage.ChooseImageActivity
-import com.ntikhoa.ocrreceipt.presentation.extractreceipt.ExtractReceiptActivity
 import com.ntikhoa.ocrreceipt.presentation.home.HomeActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest

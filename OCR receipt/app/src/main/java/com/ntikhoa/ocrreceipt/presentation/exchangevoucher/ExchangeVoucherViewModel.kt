@@ -1,7 +1,6 @@
 package com.ntikhoa.ocrreceipt.presentation.exchangevoucher
 
 import android.graphics.Bitmap
-import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.mlkit.vision.text.Text
@@ -9,9 +8,6 @@ import com.ntikhoa.ocrreceipt.business.usecase.scanreceipt.ExtractReceiptUC
 import com.ntikhoa.ocrreceipt.business.usecase.scanreceipt.OCRUseCase
 import com.ntikhoa.ocrreceipt.business.usecase.scanreceipt.ProcessImageUC
 import com.ntikhoa.ocrreceipt.presentation.OnTriggerEvent
-import com.ntikhoa.ocrreceipt.presentation.chooseimage.ChooseImageEvent
-import com.ntikhoa.ocrreceipt.presentation.chooseimage.ChooseImageState
-import com.ntikhoa.ocrreceipt.presentation.extractreceipt.ExtractReceiptState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -27,28 +23,24 @@ constructor(
     private val processImageUC: ProcessImageUC,
     private val ocr: OCRUseCase,
     private val extractReceiptUC: ExtractReceiptUC,
-) : ViewModel(), OnTriggerEvent<ChooseImageEvent> {
+) : ViewModel(), OnTriggerEvent<ExchangeVoucherEvent> {
 
     var croppedImage: Bitmap? = null
     var image: Bitmap? = null
 
-    private val _state = MutableStateFlow(ChooseImageState())
+    private val _state = MutableStateFlow(ExchangeVoucherState())
     val state get() = _state.asStateFlow()
-
-    private val _anotherState = MutableStateFlow(ExtractReceiptState())
-    val anotherState get() = _anotherState.asStateFlow()
 
     private var processImageJob: Job? = null
     private var ocrJob: Job? = null
     private var extractReceiptJob: Job? = null
 
-    override fun onTriggerEvent(event: ChooseImageEvent) {
+    override fun onTriggerEvent(event: ExchangeVoucherEvent) {
         viewModelScope.launch {
             when (event) {
-                is ChooseImageEvent.ScanReceipt -> {
+                is ExchangeVoucherEvent.ScanReceipt -> {
                     scanReceipt(event.bitmap)
                 }
-                else -> {}
             }
         }
     }
@@ -58,7 +50,8 @@ constructor(
         processImageJob = processImageUC(bitmap).onEach { dataState ->
             val copiedState = _state.value.copy()
 
-            copiedState.isLoading = dataState.isLoading
+            if (dataState.isLoading) copiedState.isLoading = true
+
             dataState.data?.let { data ->
                 extractReceipt(data)
             }
@@ -76,15 +69,13 @@ constructor(
         ocr(bitmap)
         ocrJob = ocr(bitmap)
             .onEach { dataState ->
-                val copiedState = _anotherState.value.copy()
-                if (dataState.isLoading) {
-                    copiedState.isLoading = dataState.isLoading
-                }
+                val copiedState = _state.value.copy()
 
                 dataState.data?.let {
                     extractReceiptText(it)
                 }
-                _anotherState.value = copiedState
+
+                _state.value = copiedState
             }.flowOn(Dispatchers.Default)
             .launchIn(viewModelScope)
     }
@@ -93,14 +84,15 @@ constructor(
         extractReceiptJob?.cancel()
         extractReceiptJob = extractReceiptUC(visionText)
             .onEach { dataState ->
-                val copiedState = _anotherState.value.copy()
+                val copiedState = _state.value.copy()
 
                 copiedState.isLoading = dataState.isLoading
+
                 dataState.data?.let {
-                    copiedState.text = it
+                    copiedState.receipt = it
                 }
 
-                _anotherState.value = copiedState
+                _state.value = copiedState
             }.flowOn(Dispatchers.Default)
             .launchIn(viewModelScope)
     }

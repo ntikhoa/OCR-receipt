@@ -216,6 +216,7 @@ class TakePhotoFragment : Fragment(R.layout.fragment_take_photo) {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        cameraProvider.unbindAll()
         _binding = null
     }
 }
