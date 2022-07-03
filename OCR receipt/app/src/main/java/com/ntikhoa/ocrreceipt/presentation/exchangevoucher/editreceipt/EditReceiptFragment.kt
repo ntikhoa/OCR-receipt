@@ -25,7 +25,9 @@ class EditReceiptFragment : Fragment(R.layout.fragment_edit_receipt) {
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentEditReceiptBinding.bind(view)
 
-        binding.ivReceipt.setImageBitmap(viewModel.bitmap!!)
+        binding.ivReceipt.setImageBitmap(viewModel.croppedImage!!)
+
+        activity
     }
 
     override fun onDestroyView() {

@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
+    android:background="@color/primary_white"
     tools:context=".presentation.home.HomeActivity">
 
     <LinearLayout
@@ -117,9 +117,8 @@
 
     <androidx.cardview.widget.CardView
         android:id="@+id/card_photo"
-        android:layout_width="@dimen/home_card_size"
+        android:layout_width="0dp"
         android:layout_height="@dimen/home_card_size"
-        android:layout_marginEnd="5dp"
         android:layout_marginBottom="10dp"
         android:clickable="true"
         android:focusable="true"
@@ -128,15 +127,15 @@
         app:cardCornerRadius="@dimen/home_corner_radius"
         app:cardElevation="10dp"
         app:layout_constraintBottom_toTopOf="@+id/card_history"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/card_profile"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintHorizontal_chainStyle="packed"
-        app:layout_constraintStart_toStartOf="parent">
+        app:layout_constraintStart_toStartOf="@+id/card_history">
 
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
+            android:layout_gravity="center_horizontal"
             android:layout_marginTop="20dp"
             android:src="@drawable/ic_take_photo" />
 
@@ -148,7 +147,7 @@
             android:gravity="center_horizontal"
             android:text="Chụp Hóa Đơn"
             android:textColor="@color/primary_dark_blue"
-            android:textSize="15sp" />
+            android:textSize="20sp" />
 
     </androidx.cardview.widget.CardView>
 

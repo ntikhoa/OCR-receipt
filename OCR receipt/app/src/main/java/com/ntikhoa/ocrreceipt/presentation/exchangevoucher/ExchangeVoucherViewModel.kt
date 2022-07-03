@@ -29,16 +29,14 @@ constructor(
     private val extractReceiptUC: ExtractReceiptUC,
 ) : ViewModel(), OnTriggerEvent<ChooseImageEvent> {
 
-    var bitmap: Bitmap? = null
+    var croppedImage: Bitmap? = null
+    var image: Bitmap? = null
 
     private val _state = MutableStateFlow(ChooseImageState())
     val state get() = _state.asStateFlow()
 
     private val _anotherState = MutableStateFlow(ExtractReceiptState())
     val anotherState get() = _anotherState.asStateFlow()
-
-    private val _scanState = MutableStateFlow(ExtractReceiptState())
-    val scanState get() = _anotherState.asStateFlow()
 
     private var processImageJob: Job? = null
     private var ocrJob: Job? = null
@@ -47,80 +45,13 @@ constructor(
     override fun onTriggerEvent(event: ChooseImageEvent) {
         viewModelScope.launch {
             when (event) {
-                is ChooseImageEvent.ProcessBitmapImageEvent -> {
-                    processImage(event.bitmap)
-                }
-                is ChooseImageEvent.ProcessMatImageEvent -> {
-                    processImage(event.mat)
-                }
-
-
-                is ChooseImageEvent.ExtractReceiptImage -> {
-                    extractReceipt(event.bitmap)
-                }
                 is ChooseImageEvent.ScanReceipt -> {
                     scanReceipt(event.bitmap)
                 }
+                else -> {}
             }
         }
     }
-
-
-    private suspend fun processImage(mat: Mat) {
-        processImageJob?.cancel()
-        processImageJob = processImageUC(mat).onEach { dataState ->
-            val copiedState = _state.value.copy()
-
-            copiedState.isLoading = dataState.isLoading
-            dataState.data?.let { data ->
-                copiedState.bitmap = data
-            }
-            dataState.message?.let { msg ->
-                copiedState.message = msg
-            }
-
-            _state.value = copiedState
-        }.flowOn(Dispatchers.Default)
-            .launchIn(viewModelScope)
-    }
-
-    private suspend fun processImage(bitmap: Bitmap) {
-        processImageJob?.cancel()
-        processImageJob = processImageUC(bitmap).onEach { dataState ->
-            val copiedState = _state.value.copy()
-
-            copiedState.isLoading = dataState.isLoading
-            dataState.data?.let { data ->
-                copiedState.bitmap = data
-            }
-            dataState.message?.let { msg ->
-                copiedState.message = msg
-            }
-
-            _state.value = copiedState
-        }.flowOn(Dispatchers.Default)
-            .launchIn(viewModelScope)
-    }
-
-    private suspend fun extractReceipt(imageUri: Uri) {
-        ocrJob?.cancel()
-        ocr(imageUri)
-        ocrJob = ocr(imageUri)
-            .onEach { dataState ->
-                val copiedState = _anotherState.value.copy()
-                if (dataState.isLoading) {
-                    copiedState.isLoading = dataState.isLoading
-                }
-
-                dataState.data?.let {
-                    extractReceiptText(it)
-                }
-                _anotherState.value = copiedState
-            }.flowOn(Dispatchers.Default)
-            .launchIn(viewModelScope)
-    }
-
-    //Scan Receipt Here
 
     private suspend fun scanReceipt(bitmap: Bitmap) {
         processImageJob?.cancel()

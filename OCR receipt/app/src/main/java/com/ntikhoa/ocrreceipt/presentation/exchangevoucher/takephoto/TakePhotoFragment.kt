@@ -1,9 +1,16 @@
 package com.ntikhoa.ocrreceipt.presentation.exchangevoucher.takephoto
 
+import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.ImageDecoder
+import android.os.Build
 import android.os.Bundle
+import android.provider.MediaStore
 import android.view.View
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.*
 import androidx.camera.core.ImageCapture
 import androidx.camera.extensions.ExtensionMode
@@ -67,10 +74,33 @@ class TakePhotoFragment : Fragment(R.layout.fragment_take_photo) {
             }
 
             fabDev.setOnClickListener {
-                Toast.makeText(requireContext(), "DEV SECRET BTN", Toast.LENGTH_SHORT).show()
+                val photoPickerIntent = Intent(Intent.ACTION_PICK)
+                photoPickerIntent.type = "image/*"
+                loadImageActivityResLauncher.launch(photoPickerIntent)
             }
         }
     }
+
+    private val loadImageActivityResLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            if (it.resultCode == AppCompatActivity.RESULT_OK) {
+                it.data?.data?.let { imageUri ->
+                    val bitmap = if (Build.VERSION.SDK_INT < 28) {
+                        MediaStore.Images.Media.getBitmap(
+                            requireActivity().contentResolver,
+                            imageUri
+                        )
+                    } else {
+                        val source: ImageDecoder.Source =
+                            ImageDecoder.createSource(requireActivity().contentResolver, imageUri)
+                        ImageDecoder.decodeBitmap(source)
+                    }
+
+                    viewModel.image = bitmap
+                    findNavController().navigate(R.id.action_takePhotoFragment_to_cropImageFragment)
+                }
+            }
+        }
 
     private fun takePhoto() {
         val imageCapture = imageCapture ?: return
@@ -95,7 +125,7 @@ class TakePhotoFragment : Fragment(R.layout.fragment_take_photo) {
                     super.onCaptureSuccess(image)
                     cameraProvider.unbindAll()
                     val bitmap = imageProxyToBitmap(image)
-                    viewModel.bitmap = bitmap
+                    viewModel.image = bitmap
                     findNavController().navigate(R.id.action_takePhotoFragment_to_cropImageFragment)
                 }
             })

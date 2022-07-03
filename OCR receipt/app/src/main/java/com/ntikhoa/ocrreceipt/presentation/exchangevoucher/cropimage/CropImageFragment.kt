@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
+import androidx.navigation.fragment.findNavController
 import com.ntikhoa.ocrreceipt.R
 import com.ntikhoa.ocrreceipt.databinding.FragmentCropImageBinding
 import com.ntikhoa.ocrreceipt.presentation.exchangevoucher.ExchangeVoucherViewModel
@@ -25,12 +26,17 @@ class CropImageFragment : Fragment(R.layout.fragment_crop_image) {
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentCropImageBinding.bind(view)
 
-        binding.civReceipt.setImageBitmap(viewModel.bitmap)
+        binding.civReceipt.setImageBitmap(viewModel.image)
 
-        binding.fab.setOnClickListener {
-            val cropped: Bitmap = binding.civReceipt.croppedImage!!
-            binding.ivReceipt.setImageBitmap(cropped)
-            binding.ivReceipt.visibility = View.VISIBLE
+        binding.apply {
+            btnDone.setOnClickListener {
+                viewModel.croppedImage = civReceipt.croppedImage
+                findNavController().navigate(R.id.action_cropImageFragment_to_editReceiptFragment)
+            }
+
+            btnCancel.setOnClickListener {
+                findNavController().popBackStack()
+            }
         }
     }
 
