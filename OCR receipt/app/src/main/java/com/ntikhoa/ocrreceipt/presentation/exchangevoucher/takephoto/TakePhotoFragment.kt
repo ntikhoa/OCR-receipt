@@ -125,6 +125,7 @@ class TakePhotoFragment : Fragment(R.layout.fragment_take_photo) {
                     super.onCaptureSuccess(image)
                     cameraProvider.unbindAll()
                     val bitmap = imageProxyToBitmap(image)
+
                     viewModel.image = bitmap
                     findNavController().navigate(R.id.action_takePhotoFragment_to_cropImageFragment)
                 }

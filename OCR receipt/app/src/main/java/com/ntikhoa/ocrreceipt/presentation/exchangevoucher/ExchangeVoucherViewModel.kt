@@ -4,8 +4,10 @@ import android.graphics.Bitmap
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.mlkit.vision.text.Text
+import com.ntikhoa.ocrreceipt.business.domain.model.Receipt
 import com.ntikhoa.ocrreceipt.business.usecase.scanreceipt.ExtractReceiptUC
 import com.ntikhoa.ocrreceipt.business.usecase.scanreceipt.OCRUseCase
+import com.ntikhoa.ocrreceipt.business.usecase.scanreceipt.ProcessExtractedReceiptUC
 import com.ntikhoa.ocrreceipt.business.usecase.scanreceipt.ProcessImageUC
 import com.ntikhoa.ocrreceipt.presentation.OnTriggerEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -13,7 +15,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import org.opencv.core.Mat
 import javax.inject.Inject
 
 @HiltViewModel
@@ -23,6 +24,7 @@ constructor(
     private val processImageUC: ProcessImageUC,
     private val ocr: OCRUseCase,
     private val extractReceiptUC: ExtractReceiptUC,
+    private val processExtractedReceiptUC: ProcessExtractedReceiptUC,
 ) : ViewModel(), OnTriggerEvent<ExchangeVoucherEvent> {
 
     var croppedImage: Bitmap? = null
@@ -34,6 +36,8 @@ constructor(
     private var processImageJob: Job? = null
     private var ocrJob: Job? = null
     private var extractReceiptJob: Job? = null
+    private var processExtractReceiptJob: Job? = null
+
 
     override fun onTriggerEvent(event: ExchangeVoucherEvent) {
         viewModelScope.launch {
@@ -55,8 +59,9 @@ constructor(
             dataState.data?.let { data ->
                 extractReceipt(data)
             }
-            dataState.message?.let { msg ->
-                copiedState.message = msg
+            dataState.message?.let {
+                copiedState.isLoading = false
+                copiedState.message = it
             }
 
             _state.value = copiedState
@@ -75,6 +80,11 @@ constructor(
                     extractReceiptText(it)
                 }
 
+                dataState.message?.let {
+                    copiedState.isLoading = false
+                    copiedState.message = it
+                }
+
                 _state.value = copiedState
             }.flowOn(Dispatchers.Default)
             .launchIn(viewModelScope)
@@ -86,10 +96,13 @@ constructor(
             .onEach { dataState ->
                 val copiedState = _state.value.copy()
 
-                copiedState.isLoading = dataState.isLoading
-
                 dataState.data?.let {
-                    copiedState.receipt = it
+                    processReceiptText(it)
+                }
+
+                dataState.message?.let {
+                    copiedState.isLoading = false
+                    copiedState.message = it
                 }
 
                 _state.value = copiedState
@@ -97,10 +110,32 @@ constructor(
             .launchIn(viewModelScope)
     }
 
+    private suspend fun processReceiptText(receipt: Receipt) {
+        processExtractReceiptJob?.cancel()
+        processExtractReceiptJob = processExtractedReceiptUC(receipt)
+            .onEach { dataState ->
+                val copiedState = _state.value.copy()
+
+                dataState.data?.let {
+                    copiedState.isLoading = false
+                    copiedState.receipt = it
+                }
+                dataState.message?.let {
+                    copiedState.isLoading = false
+                    copiedState.message = it
+                }
+
+                _state.value = copiedState
+            }
+            .flowOn(Dispatchers.Default)
+            .launchIn(viewModelScope)
+    }
+
     fun cancelJobs() {
         processImageJob?.cancel()
         ocrJob?.cancel()
         extractReceiptJob?.cancel()
+        processExtractReceiptJob?.cancel()
     }
 
     override fun onCleared() {

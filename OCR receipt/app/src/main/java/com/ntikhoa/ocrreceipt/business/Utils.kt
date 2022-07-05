@@ -5,7 +5,9 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Matrix
 import androidx.activity.ComponentActivity
+import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.ImageProxy
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -50,8 +52,14 @@ fun Activity.getOutputDir(): File {
     return if (mediaDir != null && mediaDir.exists()) mediaDir else filesDir
 }
 
-fun ComponentActivity.repeatLifecycleFlow(flowCollect: suspend CoroutineScope.() -> Unit) {
+fun AppCompatActivity.repeatLifecycleFlow(flowCollect: suspend CoroutineScope.() -> Unit) {
     lifecycleScope.launch {
         repeatOnLifecycle(Lifecycle.State.STARTED, flowCollect)
+    }
+}
+
+fun Fragment.repeatLifecycleFlow(flowCollect: suspend CoroutineScope.() -> Unit) {
+    viewLifecycleOwner.lifecycleScope.launch {
+        viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED, flowCollect)
     }
 }

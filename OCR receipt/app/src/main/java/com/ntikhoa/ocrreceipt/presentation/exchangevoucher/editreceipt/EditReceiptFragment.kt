@@ -3,6 +3,7 @@ package com.ntikhoa.ocrreceipt.presentation.exchangevoucher.editreceipt
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.View
+import android.widget.Toast
 import androidx.fragment.app.activityViewModels
 import com.ntikhoa.ocrreceipt.R
 import com.ntikhoa.ocrreceipt.business.repeatLifecycleFlow
@@ -25,12 +26,21 @@ class EditReceiptFragment : Fragment(R.layout.fragment_edit_receipt) {
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentEditReceiptBinding.bind(view)
 
-        requireActivity().repeatLifecycleFlow {
+        repeatLifecycleFlow {
             viewModel.state.collectLatest {
-                (requireActivity() as ExchangeVoucherActivity).loading(it.isLoading)
+                (activity as ExchangeVoucherActivity).loading(it.isLoading)
 
                 it.receipt?.let { receipt ->
-                    binding.tvReceipt.text = receipt.visionText
+                    var priceList = "Giá: \n"
+                    receipt.prices.forEach { item -> priceList = priceList + item + "\n" }
+                    priceList = priceList + "Sản phẩm\n"
+                    receipt.products.forEach { item -> priceList = priceList + item + "\n" }
+                    priceList += "\n\n RAW:\n" + receipt.visionText
+                    binding.tvReceipt.text = priceList
+                }
+
+                it.message?.let {
+                    Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
                 }
             }
         }

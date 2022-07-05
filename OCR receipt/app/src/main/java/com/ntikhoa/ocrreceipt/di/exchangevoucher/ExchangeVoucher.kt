@@ -1,8 +1,10 @@
-package com.ntikhoa.ocrreceipt.di.extractreceipt
+package com.ntikhoa.ocrreceipt.di.exchangevoucher
 
 import android.content.Context
-import com.ntikhoa.ocrreceipt.business.usecase.scanreceipt.OCRUseCase
 import com.ntikhoa.ocrreceipt.business.usecase.scanreceipt.ExtractReceiptUC
+import com.ntikhoa.ocrreceipt.business.usecase.scanreceipt.OCRUseCase
+import com.ntikhoa.ocrreceipt.business.usecase.scanreceipt.ProcessExtractedReceiptUC
+import com.ntikhoa.ocrreceipt.business.usecase.scanreceipt.ProcessImageUC
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -12,7 +14,12 @@ import dagger.hilt.android.scopes.ActivityRetainedScoped
 
 @Module
 @InstallIn(ActivityRetainedComponent::class)
-object ExtractReceiptModule {
+object ExchangeVoucher {
+    @ActivityRetainedScoped
+    @Provides
+    fun providesProcessImgUseCase(): ProcessImageUC {
+        return ProcessImageUC()
+    }
 
     @ActivityRetainedScoped
     @Provides
@@ -24,5 +31,11 @@ object ExtractReceiptModule {
     @Provides
     fun providesExtractReceiptUC(): ExtractReceiptUC {
         return ExtractReceiptUC()
+    }
+
+    @ActivityRetainedScoped
+    @Provides
+    fun providesProcessExtractedReceiptUC(): ProcessExtractedReceiptUC {
+        return ProcessExtractedReceiptUC()
     }
 }
