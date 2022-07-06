@@ -32,13 +32,15 @@
 
         <ImageButton
             android:id="@+id/btn_cancel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
             android:layout_marginStart="42dp"
             android:layout_marginTop="8dp"
+            app:tint="@color/primary_dark_blue"
             android:layout_marginBottom="16dp"
             android:background="@color/transparent"
-            android:src="@drawable/ic_cancel" />
+            android:scaleType="centerCrop"
+            android:src="@drawable/ic_back_arrow" />
 
         <View
             android:layout_width="0dp"
@@ -48,12 +50,13 @@
 
         <ImageButton
             android:id="@+id/btn_done"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="42dp"
             android:layout_marginBottom="16dp"
             android:background="@color/transparent"
+            android:scaleType="centerCrop"
             android:src="@drawable/ic_done" />
 
     </LinearLayout>
