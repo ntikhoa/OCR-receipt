@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginVertical="4dp"
@@ -12,6 +13,9 @@
         android:layout_height="50dp"
         android:layout_marginBottom="4dp"
         android:background="@drawable/stroke_layout"
+        android:clickable="true"
+        android:focusable="true"
+        android:foreground="?android:attr/selectableItemBackground"
         android:visibility="gone">
 
         <ImageView
@@ -28,24 +32,32 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginVertical="4dp"
+        android:background="@color/white"
         app:cardCornerRadius="10dp"
         app:strokeWidth="2dp">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@color/white"
             android:orientation="vertical">
 
             <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_margin="3dp"
-                android:layout_weight="1">
+                android:layout_weight="1"
+                android:background="@color/white">
 
                 <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/til_receipt"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:boxBackgroundColor="@color/white"
+                    app:boxCornerRadiusBottomEnd="10dp"
+                    app:boxCornerRadiusBottomStart="10dp"
+                    app:boxCornerRadiusTopEnd="10dp"
+                    app:boxCornerRadiusTopStart="10dp"
                     app:boxStrokeWidth="0dp"
                     app:boxStrokeWidthFocused="0dp">
 
@@ -53,10 +65,15 @@
                         android:id="@+id/et_receipt"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:minHeight="64dp"
+                        android:enabled="false"
+                        android:gravity="center"
+                        android:inputType="textMultiLine"
+                        android:minHeight="56dp"
                         android:padding="0dp"
-                        android:textColor="@color/primary_dark_blue" />
-
+                        android:scrollHorizontally="false"
+                        android:textColor="@color/primary_dark_blue"
+                        android:textSize="15sp"
+                        tools:text="PS4" />
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <ImageButton
@@ -65,11 +82,20 @@
                     android:layout_height="24dp"
                     android:layout_gravity="end|top"
                     android:backgroundTint="@color/white"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:foreground="?android:attr/selectableItemBackground"
                     android:padding="0dp"
                     android:scaleType="centerCrop"
                     android:src="@drawable/ic_remove"
                     android:visibility="gone"
                     app:tint="#FF0000" />
+
+                <View
+                    android:id="@+id/view_edit_mode"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@color/transparent" />
 
             </FrameLayout>
 
@@ -94,6 +120,9 @@
                     android:layout_gravity="end"
                     android:layout_marginVertical="5dp"
                     android:layout_marginStart="14dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:foreground="?android:attr/selectableItemBackground"
                     android:src="@drawable/ic_cancel"
                     app:tint="@color/primary_dark_blue" />
 
@@ -109,6 +138,9 @@
                     android:layout_gravity="end"
                     android:layout_marginVertical="5dp"
                     android:layout_marginEnd="14dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:foreground="?android:attr/selectableItemBackground"
                     android:scaleType="centerCrop"
                     android:src="@drawable/ic_circle_done"
                     app:tint="@color/primary_dark_blue" />
@@ -125,6 +157,9 @@
         android:layout_height="50dp"
         android:layout_marginTop="4dp"
         android:background="@drawable/stroke_layout"
+        android:clickable="true"
+        android:focusable="true"
+        android:foreground="?android:attr/selectableItemBackground"
         android:visibility="gone">
 
         <ImageView

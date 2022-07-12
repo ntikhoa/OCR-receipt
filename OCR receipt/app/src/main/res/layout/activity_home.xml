@@ -61,10 +61,10 @@
         app:layout_constraintStart_toStartOf="parent">
 
         <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
-            android:layout_marginTop="20dp"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginStart="14dp"
+            android:layout_marginTop="7dp"
             android:src="@drawable/ic_history" />
 
         <TextView
@@ -97,10 +97,10 @@
         app:layout_constraintStart_toEndOf="@+id/card_history">
 
         <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
-            android:layout_marginTop="20dp"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginStart="14dp"
+            android:layout_marginTop="7dp"
             android:src="@drawable/ic_profile" />
 
         <TextView
@@ -133,10 +133,10 @@
         app:layout_constraintStart_toStartOf="@+id/card_history">
 
         <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="12dp"
             android:src="@drawable/ic_take_photo" />
 
         <TextView

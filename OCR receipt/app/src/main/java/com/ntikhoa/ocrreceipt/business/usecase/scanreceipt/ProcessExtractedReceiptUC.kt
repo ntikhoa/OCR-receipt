@@ -17,7 +17,7 @@ class ProcessExtractedReceiptUC {
         }
 
         val prices = receipt.prices.map {
-            it.replace(" ", "")
+            it.replace(" ", "").replace(".", ",")
         }
 
         emit(
