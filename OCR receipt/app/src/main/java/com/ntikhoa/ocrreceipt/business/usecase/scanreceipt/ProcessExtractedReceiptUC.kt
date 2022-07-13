@@ -37,13 +37,13 @@ class ProcessExtractedReceiptUC {
         var result = product[0].toString()
         for (i in 1 until product.length) {
             if (product[i] == 'O' || product[i] == 'o') {
-                if (result.last().isDigit()) {
-                    result += '0'
-                }
+                result += if (result.last().isDigit()) {
+                    '0'
+                } else product[i]
             } else if (product[i] == '0') {
-                if (!result.last().isDigit()) {
-                    result += 'O'
-                }
+                result += if (!result.last().isDigit()) {
+                    'O'
+                } else product[i]
             } else {
                 result += product[i]
             }

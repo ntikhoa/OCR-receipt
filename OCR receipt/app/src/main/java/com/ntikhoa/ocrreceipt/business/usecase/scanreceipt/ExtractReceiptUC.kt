@@ -26,6 +26,7 @@ class ExtractReceiptUC {
         }
 
         val products = getProductName(textBlocksLeft)
+//        val products = getProductName(visionText)
         val prices = getProductPrices(textBlocksRight)
 
         emit(
@@ -87,6 +88,27 @@ class ExtractReceiptUC {
         textBlocksLeft.addAll(textBlocksLeftTemp)
         textBlocksRight.addAll(textBlocksRightTemp)
     }
+
+//    private fun getProductName(visionText: Text): MutableList<String> {
+//        val lines = visionText.text.lines()
+//        println(visionText.text.lines())
+//
+//        val products = mutableListOf<String>()
+//
+//        for (line in lines) {
+//            var temp = line.uppercase().trim()
+//
+//            if (temp.contains("[*|=|:]([*|=|:])+".toRegex())) {
+//                continue
+//            } else if (line.replace(".", "").trim().isDigitsOnly()) {
+//                continue
+//            } else if (line.contains("KHUYEN MAI")) {
+//                continue
+//            }
+//            products.add(temp)
+//        }
+//        return products
+//    }
 
     private fun getProductName(textBlocks: List<Text.TextBlock>): MutableList<String> {
         val lines = textBlocks.flatMap {
