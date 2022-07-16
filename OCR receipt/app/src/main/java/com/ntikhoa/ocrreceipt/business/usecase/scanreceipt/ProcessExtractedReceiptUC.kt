@@ -1,5 +1,6 @@
 package com.ntikhoa.ocrreceipt.business.usecase.scanreceipt
 
+import android.service.autofill.Validators.not
 import com.ntikhoa.ocrreceipt.business.domain.model.Receipt
 import com.ntikhoa.ocrreceipt.business.domain.utils.DataState
 import com.ntikhoa.ocrreceipt.business.usecase.handleUseCaseException
@@ -9,11 +10,33 @@ import kotlinx.coroutines.flow.flow
 
 class ProcessExtractedReceiptUC {
 
+    private val khuyenmaiDic = mapOf(
+        "KHUYẾN" to true,
+        "KHUYEN" to true,
+        "KHUYEN" to true,
+        "HUYEN" to true,
+        "KHUYER" to true,
+        "KHUVEN" to true,
+        "KHUYEN" to true,
+        "NHUYN" to true,
+        "KHUYER" to true,
+        "MÃI" to true,
+        "MAI" to true,
+        "MÄI" to true,
+        "AI" to true,
+        "MÁI" to true,
+    )
+
     suspend operator fun invoke(receipt: Receipt): Flow<DataState<Receipt>> = flow {
         emit(DataState.loading())
 
         val products = receipt.products.map {
             autoCorrectZeroAndCharO(it.trim().uppercase())
+        }.filter {
+            val word = it.split(" ")
+            if (word.size > 1) {
+                khuyenmaiDic[word[0]] == null || khuyenmaiDic[word[1]] == null
+            } else true
         }
 
         val prices = receipt.prices.map {
