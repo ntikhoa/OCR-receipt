@@ -22,7 +22,15 @@
         android:id="@+id/editReceiptFragment"
         android:name="com.ntikhoa.ocrreceipt.presentation.exchangevoucher.editreceipt.EditReceiptFragment"
         android:label="fragment_edit_receipt"
-        tools:layout="@layout/fragment_edit_receipt" />
+        tools:layout="@layout/fragment_edit_receipt">
+        <action
+            android:id="@+id/action_editReceiptFragment_to_chooseVoucherFragment"
+            app:destination="@id/chooseVoucherFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+    </fragment>
     <fragment
         android:id="@+id/cropImageFragment"
         android:name="com.ntikhoa.ocrreceipt.presentation.exchangevoucher.cropimage.CropImageFragment"
@@ -36,4 +44,9 @@
             app:popEnterAnim="@anim/slide_in_left"
             app:popExitAnim="@anim/slide_out_right" />
     </fragment>
+    <fragment
+        android:id="@+id/chooseVoucherFragment"
+        android:name="com.ntikhoa.ocrreceipt.presentation.exchangevoucher.choosevoucher.ChooseVoucherFragment"
+        android:label="fragment_choose_voucher"
+        tools:layout="@layout/fragment_choose_voucher" />
 </navigation>

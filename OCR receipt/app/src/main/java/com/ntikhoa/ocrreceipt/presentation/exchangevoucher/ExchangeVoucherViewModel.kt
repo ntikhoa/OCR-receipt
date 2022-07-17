@@ -15,6 +15,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import java.lang.Exception
 import javax.inject.Inject
 
 @HiltViewModel
@@ -29,6 +30,10 @@ constructor(
 
     var croppedImage: Bitmap? = null
     var image: Bitmap? = null
+
+    private val products = mutableListOf<String>()
+    private val prices = mutableListOf<String>()
+
 
     private val _state = MutableStateFlow(ExchangeVoucherState())
     val state get() = _state.asStateFlow()
@@ -47,6 +52,26 @@ constructor(
                 }
             }
         }
+    }
+
+    fun getCurrentProducts(): MutableList<String>? {
+        return state.value.receipt?.products
+    }
+
+    fun getCurrentPrices(): MutableList<String>? {
+        return state.value.receipt?.prices
+    }
+
+    fun submitReceipt() {
+        if (getCurrentProducts().isNullOrEmpty() && getCurrentPrices().isNullOrEmpty()) {
+            throw Exception("Products and/or Prices is empty")
+        }
+        if (getCurrentProducts()?.size != getCurrentPrices()?.size) {
+            throw Exception("Products and Prices does not match")
+        }
+        getCurrentProducts()?.let { products.addAll(it) }
+        getCurrentPrices()?.let { prices.addAll(it) }
+
     }
 
     private suspend fun scanReceipt(bitmap: Bitmap) {

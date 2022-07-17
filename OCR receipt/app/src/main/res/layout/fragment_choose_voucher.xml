@@ -1,35 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".presentation.exchangevoucher.cropimage.CropImageFragment">
+    android:orientation="vertical"
+    tools:context=".presentation.exchangevoucher.choosevoucher.ChooseVoucherFragment">
 
-    <com.canhub.cropper.CropImageView
-        android:id="@+id/civ_receipt"
+    <include layout="@layout/layout_toolbar" />
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:background="@color/primary_black"
-        app:cropBorderCornerColor="@color/secondary_blue"
-        app:cropBorderLineColor="@color/secondary_blue"
-        app:cropGuidelinesColor="@color/secondary_blue"
-        app:cropInitialCropWindowPaddingRatio="0"
-        app:cropScaleType="fitCenter"
-        app:layout_constraintBottom_toTopOf="@id/ll_bottom_bar"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_weight="1"
+        android:background="@color/primary_blue"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:layout_marginBottom="8dp"
+            android:gravity="center"
+            android:text="@string/satisfied_vouchers"
+            android:textColor="@color/white"
+            android:textSize="20sp" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_voucher"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginHorizontal="24dp"
+            android:orientation="vertical"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:itemCount="5"
+            tools:listitem="@layout/layout_voucher_item" />
+
+    </LinearLayout>
+
 
     <LinearLayout
         android:id="@+id/ll_bottom_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/primary_white"
-        android:orientation="horizontal"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
+        android:orientation="horizontal">
 
         <ImageButton
             android:id="@+id/btn_cancel"
@@ -44,7 +59,7 @@
             android:foreground="?android:attr/selectableItemBackground"
             android:padding="5dp"
             android:scaleType="centerCrop"
-            android:src="@drawable/ic_back_arrow"
+            android:src="@drawable/ic_cancel"
             app:tint="@color/primary_dark_blue" />
 
         <View
@@ -69,4 +84,4 @@
 
     </LinearLayout>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>

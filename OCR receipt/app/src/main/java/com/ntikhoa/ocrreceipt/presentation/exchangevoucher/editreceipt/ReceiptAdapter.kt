@@ -1,4 +1,4 @@
-package com.ntikhoa.ocrreceipt.presentation.exchangevoucher
+package com.ntikhoa.ocrreceipt.presentation.exchangevoucher.editreceipt
 
 import android.content.Context
 import android.text.InputType

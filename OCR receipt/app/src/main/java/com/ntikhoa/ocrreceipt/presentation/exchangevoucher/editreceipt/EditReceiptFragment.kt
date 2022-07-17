@@ -5,20 +5,19 @@ import android.view.View
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.navigation.fragment.findNavController
 import com.ntikhoa.ocrreceipt.R
 import com.ntikhoa.ocrreceipt.business.repeatLifecycleFlow
 import com.ntikhoa.ocrreceipt.databinding.FragmentEditReceiptBinding
 import com.ntikhoa.ocrreceipt.presentation.exchangevoucher.ExchangeVoucherActivity
 import com.ntikhoa.ocrreceipt.presentation.exchangevoucher.ExchangeVoucherEvent
 import com.ntikhoa.ocrreceipt.presentation.exchangevoucher.ExchangeVoucherViewModel
-import com.ntikhoa.ocrreceipt.presentation.exchangevoucher.ReceiptAdapter
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import kotlin.coroutines.coroutineContext
 
 @AndroidEntryPoint
 class EditReceiptFragment : Fragment(R.layout.fragment_edit_receipt) {
@@ -52,11 +51,11 @@ class EditReceiptFragment : Fragment(R.layout.fragment_edit_receipt) {
                     productAdapter.submitList(receipt.products)
                     priceAdapter.submitList(receipt.prices)
 
-                    viewModel.state.value.receipt?.products?.let {
+                    viewModel.getCurrentProducts()?.let {
                         productAdapter.setOnEditReceiptList(setAdapterListener(it, productAdapter))
                     }
 
-                    viewModel.state.value.receipt?.prices?.let {
+                    viewModel.getCurrentPrices()?.let {
                         priceAdapter.setOnEditReceiptList(setAdapterListener(it, priceAdapter))
                     }
                 }
@@ -68,6 +67,17 @@ class EditReceiptFragment : Fragment(R.layout.fragment_edit_receipt) {
         }
 
         viewModel.onTriggerEvent(ExchangeVoucherEvent.ScanReceipt(viewModel.croppedImage!!))
+
+        binding.apply {
+            btnDone.setOnClickListener {
+                try {
+                    viewModel.submitReceipt()
+                    findNavController().navigate(R.id.action_editReceiptFragment_to_chooseVoucherFragment)
+                } catch (e: Exception) {
+                    Toast.makeText(context, e.message, Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
     }
 
     private fun initRecyclerView() {
@@ -91,14 +101,8 @@ class EditReceiptFragment : Fragment(R.layout.fragment_edit_receipt) {
             }
 
             override fun onRemove(position: Int) {
-                CoroutineScope(Dispatchers.Main).launch {
-
-                    mutableList.removeAt(position)
-                    adapter.submitList(mutableList)
-                    println("Removed: $mutableList")
-                    delay(2000)
-                    println("RemovedAdapter: ${adapter.currentList}")
-                }
+                mutableList.removeAt(position)
+                adapter.submitList(mutableList)
             }
 
             override fun onAddTop(position: Int) {
