@@ -8,19 +8,14 @@
     app:cardCornerRadius="5dp"
     app:cardElevation="10dp">
 
-    <ImageView
-        android:layout_width="20dp"
-        android:layout_height="20dp"
-        android:layout_gravity="end|top"
-        android:layout_margin="12dp"
-        android:src="@drawable/ic_circle_done"
-        android:visibility="gone"
-        app:tint="@color/primary_dark_blue"
-        tools:visibility="visible" />
-
     <LinearLayout
+        android:id="@+id/ll"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:clickable="true"
+        android:focusable="true"
+        android:foreground="?android:attr/selectableItemBackground"
         android:orientation="vertical">
 
         <TextView
@@ -49,4 +44,14 @@
             tools:text="Một bộ dao nĩa" />
     </LinearLayout>
 
+    <ImageView
+        android:id="@+id/iv_chosen"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_gravity="end|top"
+        android:layout_margin="12dp"
+        android:src="@drawable/ic_circle_done"
+        android:visibility="gone"
+        app:tint="@color/primary_dark_blue"
+        tools:visibility="visible" />
 </com.google.android.material.card.MaterialCardView>

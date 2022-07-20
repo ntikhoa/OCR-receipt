@@ -1,11 +1,11 @@
 package com.ntikhoa.ocrreceipt.presentation
 
-data class SessionManager(
-    private var token: String? = null,
-) {
+object SessionManager {
     var name: String? = null
         private set
 
+    var token: String? = null
+        private set
 
     fun login(token: String, name: String) {
         this.token = token

@@ -40,10 +40,6 @@
             android:name=".presentation.auth.LoginActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
-        <activity
-            android:name=".presentation.chooseimage.ChooseImageActivity"
-            android:exported="false"
-            android:screenOrientation="portrait" />
 
         <meta-data
             android:name="com.google.mlkit.vision.DEPENDENCIES"
@@ -51,10 +47,6 @@
 
         <activity
             android:name=".presentation.TakePhotoActivity"
-            android:exported="false"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".presentation.extractreceipt.ExtractReceiptActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
     </application>

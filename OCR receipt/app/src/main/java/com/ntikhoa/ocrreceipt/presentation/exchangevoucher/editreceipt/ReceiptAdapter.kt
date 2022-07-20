@@ -38,10 +38,6 @@ class ReceiptAdapter(private val isPrice: Boolean = false) :
         }
     }
 
-    override fun getItemCount(): Int {
-        return currentList.size
-    }
-
     companion object {
         val DIFF_CALLBACK = object : DiffUtil.ItemCallback<String>() {
             override fun areItemsTheSame(oldItem: String, newItem: String): Boolean {

@@ -5,11 +5,16 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.mlkit.vision.text.Text
 import com.ntikhoa.ocrreceipt.business.domain.model.Receipt
+import com.ntikhoa.ocrreceipt.business.domain.model.Voucher
+import com.ntikhoa.ocrreceipt.business.usecase.exchangevoucher.ExchangeVoucherUC
 import com.ntikhoa.ocrreceipt.business.usecase.scanreceipt.ExtractReceiptUC
 import com.ntikhoa.ocrreceipt.business.usecase.scanreceipt.OCRUseCase
 import com.ntikhoa.ocrreceipt.business.usecase.scanreceipt.ProcessExtractedReceiptUC
 import com.ntikhoa.ocrreceipt.business.usecase.scanreceipt.ProcessImageUC
 import com.ntikhoa.ocrreceipt.presentation.OnTriggerEvent
+import com.ntikhoa.ocrreceipt.presentation.SessionManager
+import com.ntikhoa.ocrreceipt.presentation.exchangevoucher.choosevoucher.ExchangeVoucherState
+import com.ntikhoa.ocrreceipt.presentation.exchangevoucher.editreceipt.ScanReceiptState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -26,22 +31,28 @@ constructor(
     private val ocr: OCRUseCase,
     private val extractReceiptUC: ExtractReceiptUC,
     private val processExtractedReceiptUC: ProcessExtractedReceiptUC,
+    private val exchangeVoucherUC: ExchangeVoucherUC,
+    private val sessionManager: SessionManager,
 ) : ViewModel(), OnTriggerEvent<ExchangeVoucherEvent> {
 
     var croppedImage: Bitmap? = null
     var image: Bitmap? = null
 
     private val products = mutableListOf<String>()
-    private val prices = mutableListOf<String>()
+    private val prices = mutableListOf<Int>()
+    private var voucher: Voucher? = null
 
-
-    private val _state = MutableStateFlow(ExchangeVoucherState())
+    private val _state = MutableStateFlow(ScanReceiptState())
     val state get() = _state.asStateFlow()
+
+    private val _viewExchangeState = MutableStateFlow(ExchangeVoucherState())
+    val viewExchangeState get() = _viewExchangeState.asStateFlow()
 
     private var processImageJob: Job? = null
     private var ocrJob: Job? = null
     private var extractReceiptJob: Job? = null
     private var processExtractReceiptJob: Job? = null
+    private var viewExchangeVoucherJob: Job? = null
 
 
     override fun onTriggerEvent(event: ExchangeVoucherEvent) {
@@ -49,6 +60,14 @@ constructor(
             when (event) {
                 is ExchangeVoucherEvent.ScanReceipt -> {
                     scanReceipt(event.bitmap)
+                }
+                is ExchangeVoucherEvent.ViewExchangeVoucher -> {
+                    sessionManager.token?.let {
+                        viewExchangeVoucher(it)
+                    } ?: run {
+                        _viewExchangeState.value =
+                            _viewExchangeState.value.copy(message = "Invalid Token")
+                    }
                 }
             }
         }
@@ -70,8 +89,38 @@ constructor(
             throw Exception("Products and Prices does not match")
         }
         getCurrentProducts()?.let { products.addAll(it) }
-        getCurrentPrices()?.let { prices.addAll(it) }
+        getCurrentPrices()?.let {
+            prices.addAll(
+                it.map { it.replace(",", "").toInt() }
+            )
+        }
 
+    }
+
+    fun submitVoucher(position: Int) {
+        voucher = _viewExchangeState.value.voucher?.let {
+            it[position]
+        }
+    }
+
+    private suspend fun viewExchangeVoucher(token: String) {
+        viewExchangeVoucherJob?.cancel()
+        viewExchangeVoucherJob = exchangeVoucherUC(token, products, prices).onEach { dataState ->
+            val copiedState = _viewExchangeState.value.copy()
+
+            copiedState.isLoading = dataState.isLoading
+
+            dataState.data?.let { data ->
+                copiedState.voucher = data
+            }
+
+            dataState.message?.let { msg ->
+                copiedState.message = msg
+            }
+
+            _viewExchangeState.value = copiedState
+        }.flowOn(Dispatchers.IO)
+            .launchIn(viewModelScope)
     }
 
     private suspend fun scanReceipt(bitmap: Bitmap) {
@@ -161,6 +210,7 @@ constructor(
         ocrJob?.cancel()
         extractReceiptJob?.cancel()
         processExtractReceiptJob?.cancel()
+        viewExchangeVoucherJob?.cancel()
     }
 
     override fun onCleared() {

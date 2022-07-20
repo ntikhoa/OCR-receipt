@@ -48,5 +48,14 @@
         android:id="@+id/chooseVoucherFragment"
         android:name="com.ntikhoa.ocrreceipt.presentation.exchangevoucher.choosevoucher.ChooseVoucherFragment"
         android:label="fragment_choose_voucher"
-        tools:layout="@layout/fragment_choose_voucher" />
+        tools:layout="@layout/fragment_choose_voucher" >
+        <action
+            android:id="@+id/action_chooseVoucherFragment_to_getUserInfoFragment"
+            app:destination="@id/getUserInfoFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/getUserInfoFragment"
+        android:name="com.ntikhoa.ocrreceipt.presentation.exchangevoucher.getuserinfo.GetUserInfoFragment"
+        android:label="fragment_get_user_info"
+        tools:layout="@layout/fragment_get_user_info" />
 </navigation>

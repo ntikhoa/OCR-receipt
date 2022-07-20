@@ -30,10 +30,14 @@ class EditReceiptFragment : Fragment(R.layout.fragment_edit_receipt) {
 
     private val viewModel by activityViewModels<ExchangeVoucherViewModel>()
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        viewModel.onTriggerEvent(ExchangeVoucherEvent.ScanReceipt(viewModel.croppedImage!!))
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentEditReceiptBinding.bind(view)
-
         initRecyclerView()
 
         repeatLifecycleFlow {
@@ -66,7 +70,7 @@ class EditReceiptFragment : Fragment(R.layout.fragment_edit_receipt) {
             }
         }
 
-        viewModel.onTriggerEvent(ExchangeVoucherEvent.ScanReceipt(viewModel.croppedImage!!))
+//        viewModel.onTriggerEvent(ExchangeVoucherEvent.ScanReceipt(viewModel.croppedImage!!))
 
         binding.apply {
             btnDone.setOnClickListener {
