@@ -124,6 +124,10 @@ class EditReceiptFragment : Fragment(R.layout.fragment_edit_receipt) {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        binding.apply {
+            rvPrice.adapter = null
+            rvProduct.adapter = null
+        }
         _binding = null
     }
 }

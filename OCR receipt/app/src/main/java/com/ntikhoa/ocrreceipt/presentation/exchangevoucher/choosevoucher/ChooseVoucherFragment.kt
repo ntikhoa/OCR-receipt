@@ -1,10 +1,12 @@
 package com.ntikhoa.ocrreceipt.presentation.exchangevoucher.choosevoucher
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.navigation.fragment.findNavController
 import com.ntikhoa.ocrreceipt.R
 import com.ntikhoa.ocrreceipt.business.repeatLifecycleFlow
 import com.ntikhoa.ocrreceipt.databinding.FragmentChooseVoucherBinding
@@ -23,6 +25,14 @@ class ChooseVoucherFragment : Fragment(R.layout.fragment_choose_voucher) {
     private lateinit var adapter: VoucherAdapter
 
     private val viewModel by activityViewModels<ExchangeVoucherViewModel>()
+
+    private var voucherIndex = -1
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        viewModel.onTriggerEvent(ExchangeVoucherEvent.ViewExchangeVoucher)
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -44,7 +54,16 @@ class ChooseVoucherFragment : Fragment(R.layout.fragment_choose_voucher) {
             }
         }
 
-        viewModel.onTriggerEvent(ExchangeVoucherEvent.ViewExchangeVoucher)
+        binding.apply {
+            btnDone.setOnClickListener {
+                if (voucherIndex != -1 && viewModel.submitVoucher(voucherIndex) != null) {
+                    println(viewModel.voucher?.Name)
+                    findNavController().navigate(R.id.action_chooseVoucherFragment_to_getUserInfoFragment)
+                } else {
+                    Toast.makeText(context, "Vui lòng chọn khuyến mãi", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
     }
 
     private fun initRecyclerView() {
@@ -53,8 +72,7 @@ class ChooseVoucherFragment : Fragment(R.layout.fragment_choose_voucher) {
             rvVoucher.adapter = adapter
             adapter.listener = object : VoucherAdapter.OnItemClickListener {
                 override fun onClick(position: Int) {
-                    println("Activity: clicked")
-                    viewModel.submitVoucher(position)
+                    voucherIndex = position
                 }
             }
         }
@@ -62,6 +80,7 @@ class ChooseVoucherFragment : Fragment(R.layout.fragment_choose_voucher) {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        binding.rvVoucher.adapter = null
         _binding = null
     }
 }

@@ -40,7 +40,8 @@ constructor(
 
     private val products = mutableListOf<String>()
     private val prices = mutableListOf<Int>()
-    private var voucher: Voucher? = null
+    var voucher: Voucher? = null
+        private set
 
     private val _state = MutableStateFlow(ScanReceiptState())
     val state get() = _state.asStateFlow()
@@ -97,10 +98,11 @@ constructor(
 
     }
 
-    fun submitVoucher(position: Int) {
+    fun submitVoucher(position: Int): Voucher? {
         voucher = _viewExchangeState.value.voucher?.let {
             it[position]
         }
+        return voucher
     }
 
     private suspend fun viewExchangeVoucher(token: String) {
