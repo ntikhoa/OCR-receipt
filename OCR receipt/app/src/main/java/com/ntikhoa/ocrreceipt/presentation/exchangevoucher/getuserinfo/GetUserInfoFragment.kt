@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.navigation.fragment.findNavController
 import com.ntikhoa.ocrreceipt.R
 import com.ntikhoa.ocrreceipt.business.domain.model.Voucher
 import com.ntikhoa.ocrreceipt.databinding.FragmentGetUserInfoBinding
@@ -23,6 +24,12 @@ class GetUserInfoFragment : Fragment(R.layout.fragment_get_user_info) {
 
         viewModel.voucher?.let {
             setVoucherInfo(it)
+        }
+
+        binding.apply {
+            btnDone.setOnClickListener {
+                findNavController().navigate(R.id.action_getUserInfoFragment_to_takeEvidenceFragment)
+            }
         }
     }
 

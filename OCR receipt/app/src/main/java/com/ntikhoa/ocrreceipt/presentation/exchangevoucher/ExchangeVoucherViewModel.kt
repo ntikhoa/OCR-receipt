@@ -38,6 +38,8 @@ constructor(
     var croppedImage: Bitmap? = null
     var image: Bitmap? = null
 
+    var evidenceImage: Bitmap? = null
+
     private val products = mutableListOf<String>()
     private val prices = mutableListOf<Int>()
     var voucher: Voucher? = null

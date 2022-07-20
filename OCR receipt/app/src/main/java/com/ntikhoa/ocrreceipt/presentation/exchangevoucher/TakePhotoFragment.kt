@@ -1,4 +1,4 @@
-package com.ntikhoa.ocrreceipt.presentation.exchangevoucher.takephoto
+package com.ntikhoa.ocrreceipt.presentation.exchangevoucher
 
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -10,75 +10,50 @@ import android.provider.MediaStore
 import android.view.View
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.IdRes
 import androidx.appcompat.app.AppCompatActivity
-import androidx.camera.core.*
+import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageCapture
+import androidx.camera.core.ImageProxy
+import androidx.camera.core.Preview
 import androidx.camera.extensions.ExtensionMode
 import androidx.camera.extensions.ExtensionsManager
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.LifecycleOwner
-import androidx.navigation.fragment.findNavController
-import com.ntikhoa.ocrreceipt.R
 import com.ntikhoa.ocrreceipt.business.domain.utils.Constants
 import com.ntikhoa.ocrreceipt.business.getOutputDir
 import com.ntikhoa.ocrreceipt.business.imageProxyToBitmap
-import com.ntikhoa.ocrreceipt.databinding.FragmentTakePhotoBinding
-import com.ntikhoa.ocrreceipt.presentation.exchangevoucher.ExchangeVoucherViewModel
-import dagger.hilt.android.AndroidEntryPoint
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
-@AndroidEntryPoint
-class TakePhotoFragment : Fragment(R.layout.fragment_take_photo) {
-
-    private var _binding: FragmentTakePhotoBinding? = null
-    private val binding get() = _binding!!
+abstract class TakePhotoFragment(@IdRes layoutID: Int) : Fragment(layoutID) {
 
     private var imageCapture: ImageCapture? = null
     private lateinit var cameraExecutor: ExecutorService
     private lateinit var outputDir: File
     private lateinit var cameraProvider: ProcessCameraProvider
 
-    private val viewModel by activityViewModels<ExchangeVoucherViewModel>()
+    abstract fun onLoadImage(bitmap: Bitmap)
+    abstract fun onTakePhoto(bitmap: Bitmap)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        _binding = FragmentTakePhotoBinding.bind(view)
 
         cameraExecutor = Executors.newSingleThreadExecutor()
         outputDir = requireActivity().getOutputDir()
 
-        if (allPermissionGranted()) {
-            startCamera()
-        } else {
-            ActivityCompat.requestPermissions(
-                requireActivity(), Constants.REQUIRED_PERMISSIONS,
-                Constants.REQUEST_CODE_PERMISSIONS
-            )
-        }
+    }
 
-        binding.apply {
-            btnBack.setOnClickListener {
-                requireActivity().onBackPressed()
-            }
-
-            btnTakePhoto.setOnClickListener {
-                takePhoto()
-            }
-
-            fabDev.setOnClickListener {
-                val photoPickerIntent = Intent(Intent.ACTION_PICK)
-                photoPickerIntent.type = "image/*"
-                loadImageActivityResLauncher.launch(photoPickerIntent)
-            }
-        }
+    protected fun loadImage() {
+        val photoPickerIntent = Intent(Intent.ACTION_PICK)
+        photoPickerIntent.type = "image/*"
+        loadImageActivityResLauncher.launch(photoPickerIntent)
     }
 
     private val loadImageActivityResLauncher =
@@ -96,13 +71,23 @@ class TakePhotoFragment : Fragment(R.layout.fragment_take_photo) {
                         ImageDecoder.decodeBitmap(source)
                     }
 
-                    viewModel.image = bitmap
-                    findNavController().navigate(R.id.action_takePhotoFragment_to_cropImageFragment)
+                    onLoadImage(bitmap)
                 }
             }
         }
 
-    private fun takePhoto() {
+    protected fun startCamera(surfaceProvider: Preview.SurfaceProvider) {
+        if (allPermissionGranted()) {
+            setupCamera(surfaceProvider)
+        } else {
+            ActivityCompat.requestPermissions(
+                requireActivity(), Constants.REQUIRED_PERMISSIONS,
+                Constants.REQUEST_CODE_PERMISSIONS
+            )
+        }
+    }
+
+    protected fun takePhoto() {
         val imageCapture = imageCapture ?: return
         val photoFile = File(
             outputDir,
@@ -126,8 +111,7 @@ class TakePhotoFragment : Fragment(R.layout.fragment_take_photo) {
                     cameraProvider.unbindAll()
                     val bitmap = imageProxyToBitmap(image)
 
-                    viewModel.image = bitmap
-                    findNavController().navigate(R.id.action_takePhotoFragment_to_cropImageFragment)
+                    onTakePhoto(bitmap)
                 }
             })
 
@@ -152,7 +136,7 @@ class TakePhotoFragment : Fragment(R.layout.fragment_take_photo) {
 //            })
     }
 
-    private fun startCamera() {
+    private fun setupCamera(surfaceProvider: Preview.SurfaceProvider) {
         val cameraProviderFuture = ProcessCameraProvider.getInstance(requireContext())
         cameraProviderFuture.addListener({
             cameraProvider = cameraProviderFuture.get()
@@ -164,7 +148,7 @@ class TakePhotoFragment : Fragment(R.layout.fragment_take_photo) {
                 val extensionsManager = extensionsManagerFuture.get()
                 val preview = Preview.Builder()
                     .build()
-                preview.setSurfaceProvider(binding.viewFinder.surfaceProvider)
+                preview.setSurfaceProvider(surfaceProvider)
 
                 imageCapture = ImageCapture.Builder().build()
                 var cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
@@ -207,7 +191,7 @@ class TakePhotoFragment : Fragment(R.layout.fragment_take_photo) {
         return cameraSelector
     }
 
-    fun allPermissionGranted() =
+    private fun allPermissionGranted() =
         Constants.REQUIRED_PERMISSIONS.all {
             ContextCompat.checkSelfPermission(
                 requireContext(),
@@ -218,6 +202,5 @@ class TakePhotoFragment : Fragment(R.layout.fragment_take_photo) {
     override fun onDestroyView() {
         super.onDestroyView()
         cameraProvider.unbindAll()
-        _binding = null
     }
 }

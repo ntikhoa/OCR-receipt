@@ -3,15 +3,15 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/exchange_voucher_nav_graph"
-    app:startDestination="@id/takePhotoFragment">
+    app:startDestination="@id/takeReceiptFragment">
 
     <fragment
-        android:id="@+id/takePhotoFragment"
-        android:name="com.ntikhoa.ocrreceipt.presentation.exchangevoucher.takephoto.TakePhotoFragment"
+        android:id="@+id/takeReceiptFragment"
+        android:name="com.ntikhoa.ocrreceipt.presentation.exchangevoucher.takereceipt.TakeReceiptFragment"
         android:label="fragment_take_photo"
-        tools:layout="@layout/fragment_take_photo">
+        tools:layout="@layout/fragment_take_receipt">
         <action
-            android:id="@+id/action_takePhotoFragment_to_cropImageFragment"
+            android:id="@+id/action_takeReceiptFragment_to_cropImageFragment"
             app:destination="@id/cropImageFragment"
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"
@@ -61,5 +61,26 @@
         android:id="@+id/getUserInfoFragment"
         android:name="com.ntikhoa.ocrreceipt.presentation.exchangevoucher.getuserinfo.GetUserInfoFragment"
         android:label="fragment_get_user_info"
-        tools:layout="@layout/fragment_get_user_info" />
+        tools:layout="@layout/fragment_get_user_info">
+        <action
+            android:id="@+id/action_getUserInfoFragment_to_takeEvidenceFragment"
+            app:destination="@id/takeEvidenceFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/takeEvidenceFragment"
+        android:name="com.ntikhoa.ocrreceipt.presentation.exchangevoucher.TakeEvidenceFragment"
+        android:label="TakeEvidenceFragment"
+        app:enterAnim="@anim/slide_in_right"
+        app:exitAnim="@anim/slide_out_left"
+        app:popEnterAnim="@anim/slide_in_left"
+        app:popExitAnim="@anim/slide_out_right" >
+        <action
+            android:id="@+id/action_takeEvidenceFragment_to_doneExchangeFragment"
+            app:destination="@id/doneExchangeFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/doneExchangeFragment"
+        android:name="com.ntikhoa.ocrreceipt.presentation.exchangevoucher.exchangedone.DoneExchangeFragment"
+        android:label="fragment_done_exchange"
+        tools:layout="@layout/fragment_done_exchange" />
 </navigation>
