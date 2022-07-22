@@ -2,6 +2,7 @@ package com.ntikhoa.ocrreceipt.presentation
 
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
 import android.widget.Toast
@@ -12,11 +13,14 @@ import androidx.camera.extensions.ExtensionsManager
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.net.toUri
 import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.ViewModel
 import com.ntikhoa.ocrreceipt.business.domain.utils.Constants
 import com.ntikhoa.ocrreceipt.business.getOutputDir
 import com.ntikhoa.ocrreceipt.databinding.ActivityTakePhotoBinding
 import java.io.File
+import java.io.FileOutputStream
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.ExecutorService
@@ -162,7 +166,7 @@ class TakePhotoActivity : AppCompatActivity() {
         return cameraSelector
     }
 
-    fun allPermissionGranted() =
+    private fun allPermissionGranted() =
         Constants.REQUIRED_PERMISSIONS.all {
             ContextCompat.checkSelfPermission(
                 baseContext,

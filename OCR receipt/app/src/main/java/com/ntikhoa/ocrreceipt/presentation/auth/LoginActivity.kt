@@ -5,10 +5,8 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.viewModels
-import com.google.android.material.snackbar.Snackbar
 import com.ntikhoa.ocrreceipt.business.repeatLifecycleFlow
 import com.ntikhoa.ocrreceipt.databinding.ActivityLoginBinding
-import com.ntikhoa.ocrreceipt.presentation.extractreceipt.ExtractReceiptActivity
 import com.ntikhoa.ocrreceipt.presentation.home.HomeActivity
 import com.ntikhoa.ocrreceipt.presentation.setVisibility
 import dagger.hilt.android.AndroidEntryPoint

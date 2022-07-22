@@ -2,6 +2,7 @@ package com.ntikhoa.ocrreceipt.business.usecase.scanreceipt
 
 import androidx.core.text.isDigitsOnly
 import com.google.mlkit.vision.text.Text
+import com.ntikhoa.ocrreceipt.business.domain.model.Receipt
 import com.ntikhoa.ocrreceipt.business.domain.utils.DataState
 import com.ntikhoa.ocrreceipt.business.usecase.handleUseCaseException
 import kotlinx.coroutines.flow.Flow
@@ -9,33 +10,46 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 
 class ExtractReceiptUC {
-    suspend operator fun invoke(visionText: Text): Flow<DataState<String>> = flow {
+    suspend operator fun invoke(visionText: Text): Flow<DataState<Receipt>> = flow {
+        emit(DataState.loading())
+        var msg: String? = null
         val textBlocksLeft = mutableListOf<Text.TextBlock>()
         val textBlocksRight = mutableListOf<Text.TextBlock>()
         val textBlocksMiddle = mutableListOf<Text.TextBlock>()
         val textBlocks = visionText.textBlocks
-        println("====ALL====")
-        println(visionText.text)
 
         splitData(textBlocks, textBlocksLeft, textBlocksRight)
-        splitData(textBlocksRight, textBlocksMiddle, textBlocksRight)
+        try {
+            splitData(textBlocksRight, textBlocksMiddle, textBlocksRight)
+        } catch (e: Exception) {
+            msg = "There is exception"
+        }
 
-        val productName = getProductName(textBlocksLeft)
+        val products = getProductName(textBlocksLeft)
         val prices = getProductPrices(textBlocksRight)
 
-        emit(DataState(data = productName.reduce { acc, s ->
-            acc + "\n" + s
-        } +
-                "\n\n" +
-                prices.reduce { acc, s ->
-                    acc + "\n" + s
-                } +
-                "\n\n" +
-                "RawOCR:" +
-                "\n" +
-                visionText.text))
+        emit(
+            DataState(
+                data = Receipt(
+                    products = products,
+                    prices = prices,
+                    visionText = visionText.text
+                ), message = msg
+            )
+        )
     }.catch {
-        emit(handleUseCaseException(it))
+        val dataState = handleUseCaseException<Receipt>(it)
+        emit(
+            dataState.copy(
+                data =
+                Receipt(
+                    visionText = visionText.text,
+                    products = mutableListOf(),
+                    prices = mutableListOf()
+                ),
+                message = "Cannot extracted"
+            )
+        )
     }
 
     private fun splitData(
@@ -72,15 +86,6 @@ class ExtractReceiptUC {
         textBlocksRight.clear()
         textBlocksLeft.addAll(textBlocksLeftTemp)
         textBlocksRight.addAll(textBlocksRightTemp)
-
-        println("====LEFT====")
-        println(textBlocksLeft.map {
-            it.text
-        })
-        println("====RIGHT====")
-        println(textBlocksRight.map {
-            it.text
-        })
     }
 
     private fun getProductName(textBlocks: List<Text.TextBlock>): MutableList<String> {
@@ -96,10 +101,9 @@ class ExtractReceiptUC {
                 lines.removeAt(i)
             } else if (line.replace(".", "").trim().isDigitsOnly()) {
                 lines.removeAt(i)
-            } else if (line.contains("KHUYEN MAI")) {
-                lines.removeAt(i)
             }
         }
+
         return lines
     }
 

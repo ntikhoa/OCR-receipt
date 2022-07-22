@@ -45,6 +45,6 @@ object AppModule {
     @Provides
     @Singleton
     fun providesSessionManager(): SessionManager {
-        return SessionManager()
+        return SessionManager
     }
 }

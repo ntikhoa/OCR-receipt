@@ -5,16 +5,32 @@
       <map>
         <entry key="..\:/Project/OCR receipt/app/src/main/res/layout/activity_main.xml" value="0.1" />
         <entry key="..\:/Project/OCR receipt/app/src/main/res/layout/activity_take_photo.xml" value="0.264" />
+        <entry key="..\:/Project/OCR-receipt/OCR receipt/app/src/main/res/drawable/gradient_main_background.xml" value="0.1845" />
+        <entry key="..\:/Project/OCR-receipt/OCR receipt/app/src/main/res/drawable/stroke_layout.xml" value="0.1885" />
+        <entry key="..\:/Project/OCR-receipt/OCR receipt/app/src/main/res/font/inter_medium.xml" value="0.2125" />
+        <entry key="..\:/Project/OCR-receipt/OCR receipt/app/src/main/res/font/open_sans_semibold.xml" value="0.4265625" />
         <entry key="..\:/Project/OCR-receipt/OCR receipt/app/src/main/res/layout/activity_choose_image.xml" value="0.2116788321167883" />
+        <entry key="..\:/Project/OCR-receipt/OCR receipt/app/src/main/res/layout/activity_exchange_voucher.xml" value="0.38125" />
         <entry key="..\:/Project/OCR-receipt/OCR receipt/app/src/main/res/layout/activity_extract_receipt.xml" value="0.25416666666666665" />
         <entry key="..\:/Project/OCR-receipt/OCR receipt/app/src/main/res/layout/activity_home.xml" value="0.4" />
-        <entry key="..\:/Project/OCR-receipt/OCR receipt/app/src/main/res/layout/activity_login.xml" value="0.38125" />
+        <entry key="..\:/Project/OCR-receipt/OCR receipt/app/src/main/res/layout/activity_login.xml" value="0.4" />
         <entry key="..\:/Project/OCR-receipt/OCR receipt/app/src/main/res/layout/activity_main.xml" value="0.264" />
         <entry key="..\:/Project/OCR-receipt/OCR receipt/app/src/main/res/layout/activity_preprocess_img.xml" value="0.264" />
         <entry key="..\:/Project/OCR-receipt/OCR receipt/app/src/main/res/layout/activity_splash.xml" value="0.25416666666666665" />
         <entry key="..\:/Project/OCR-receipt/OCR receipt/app/src/main/res/layout/activity_take_photo.xml" value="0.25416666666666665" />
+        <entry key="..\:/Project/OCR-receipt/OCR receipt/app/src/main/res/layout/fragment_choose_voucher.xml" value="0.4" />
+        <entry key="..\:/Project/OCR-receipt/OCR receipt/app/src/main/res/layout/fragment_crop_image.xml" value="0.4" />
+        <entry key="..\:/Project/OCR-receipt/OCR receipt/app/src/main/res/layout/fragment_done_exchange.xml" value="0.4" />
+        <entry key="..\:/Project/OCR-receipt/OCR receipt/app/src/main/res/layout/fragment_edit_receipt.xml" value="0.4" />
+        <entry key="..\:/Project/OCR-receipt/OCR receipt/app/src/main/res/layout/fragment_get_user_info.xml" value="0.4" />
+        <entry key="..\:/Project/OCR-receipt/OCR receipt/app/src/main/res/layout/fragment_take_evidence.xml" value="0.38125" />
+        <entry key="..\:/Project/OCR-receipt/OCR receipt/app/src/main/res/layout/fragment_take_photo.xml" value="0.38125" />
+        <entry key="..\:/Project/OCR-receipt/OCR receipt/app/src/main/res/layout/fragment_take_receipt.xml" value="0.38125" />
+        <entry key="..\:/Project/OCR-receipt/OCR receipt/app/src/main/res/layout/layout_edit_receipt_item.xml" value="0.536" />
         <entry key="..\:/Project/OCR-receipt/OCR receipt/app/src/main/res/layout/layout_login_edit_text.xml" value="0.4" />
         <entry key="..\:/Project/OCR-receipt/OCR receipt/app/src/main/res/layout/layout_toolbar.xml" value="0.3796875" />
+        <entry key="..\:/Project/OCR-receipt/OCR receipt/app/src/main/res/layout/layout_voucher_item.xml" value="0.4" />
+        <entry key="..\:/Project/OCR-receipt/OCR receipt/app/src/main/res/layout/layout_vouchers.xml" value="0.4" />
       </map>
     </option>
   </component>

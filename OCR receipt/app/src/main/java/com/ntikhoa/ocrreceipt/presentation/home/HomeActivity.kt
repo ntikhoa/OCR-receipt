@@ -4,12 +4,10 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.activity.viewModels
-import com.ntikhoa.ocrreceipt.R
 import com.ntikhoa.ocrreceipt.databinding.ActivityHomeBinding
-import com.ntikhoa.ocrreceipt.presentation.SessionManager
 import com.ntikhoa.ocrreceipt.presentation.TakePhotoActivity
+import com.ntikhoa.ocrreceipt.presentation.exchangevoucher.ExchangeVoucherActivity
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class HomeActivity : AppCompatActivity() {
@@ -27,7 +25,7 @@ class HomeActivity : AppCompatActivity() {
             tvHello.text = viewModel.getFirstName()
 
             cardPhoto.setOnClickListener {
-                val intent = Intent(applicationContext, TakePhotoActivity::class.java)
+                val intent = Intent(applicationContext, ExchangeVoucherActivity::class.java)
                 startActivity(intent)
             }
         }
