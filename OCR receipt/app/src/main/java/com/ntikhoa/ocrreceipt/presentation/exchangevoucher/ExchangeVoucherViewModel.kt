@@ -6,22 +6,29 @@ import androidx.lifecycle.viewModelScope
 import com.google.mlkit.vision.text.Text
 import com.ntikhoa.ocrreceipt.business.domain.model.Receipt
 import com.ntikhoa.ocrreceipt.business.domain.model.Voucher
+import com.ntikhoa.ocrreceipt.business.getImageUri
 import com.ntikhoa.ocrreceipt.business.usecase.exchangevoucher.ExchangeVoucherUC
+import com.ntikhoa.ocrreceipt.business.usecase.exchangevoucher.ViewExchangeVoucherUC
 import com.ntikhoa.ocrreceipt.business.usecase.scanreceipt.ExtractReceiptUC
 import com.ntikhoa.ocrreceipt.business.usecase.scanreceipt.OCRUseCase
 import com.ntikhoa.ocrreceipt.business.usecase.scanreceipt.ProcessExtractedReceiptUC
 import com.ntikhoa.ocrreceipt.business.usecase.scanreceipt.ProcessImageUC
 import com.ntikhoa.ocrreceipt.presentation.OnTriggerEvent
 import com.ntikhoa.ocrreceipt.presentation.SessionManager
-import com.ntikhoa.ocrreceipt.presentation.exchangevoucher.choosevoucher.ExchangeVoucherState
+import com.ntikhoa.ocrreceipt.presentation.exchangevoucher.choosevoucher.ViewExchangeVoucherState
 import com.ntikhoa.ocrreceipt.presentation.exchangevoucher.editreceipt.ScanReceiptState
+import com.ntikhoa.ocrreceipt.presentation.exchangevoucher.exchangedone.ExchangeVoucherState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import java.lang.Exception
+import okhttp3.MediaType
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
+import java.io.File
 import javax.inject.Inject
+
 
 @HiltViewModel
 class ExchangeVoucherViewModel
@@ -31,6 +38,7 @@ constructor(
     private val ocr: OCRUseCase,
     private val extractReceiptUC: ExtractReceiptUC,
     private val processExtractedReceiptUC: ProcessExtractedReceiptUC,
+    private val viewExchangeVoucherUC: ViewExchangeVoucherUC,
     private val exchangeVoucherUC: ExchangeVoucherUC,
     private val sessionManager: SessionManager,
 ) : ViewModel(), OnTriggerEvent<ExchangeVoucherEvent> {
@@ -48,8 +56,11 @@ constructor(
     private val _state = MutableStateFlow(ScanReceiptState())
     val state get() = _state.asStateFlow()
 
-    private val _viewExchangeState = MutableStateFlow(ExchangeVoucherState())
+    private val _viewExchangeState = MutableStateFlow(ViewExchangeVoucherState())
     val viewExchangeState get() = _viewExchangeState.asStateFlow()
+
+    private val _exchangeState = MutableStateFlow(ExchangeVoucherState())
+    val exchangeState get() = _exchangeState.asStateFlow()
 
     private var processImageJob: Job? = null
     private var ocrJob: Job? = null
@@ -72,8 +83,67 @@ constructor(
                             _viewExchangeState.value.copy(message = "Invalid Token")
                     }
                 }
+                is ExchangeVoucherEvent.ExchangeVoucher -> {
+                    sessionManager.token?.let {
+                        exchangeVoucher(it, event.outputDir)
+                    } ?: run {
+                        _viewExchangeState.value =
+                            _viewExchangeState.value.copy(message = "Invalid Token")
+                    }
+                }
             }
         }
+    }
+
+    private suspend fun exchangeVoucher(token: String, outputDir: File) {
+        val imagesUri = listOf(image!!, evidenceImage)
+        val imagesRequestBody = imagesUri.map {
+            val file = getImageUri(outputDir, it!!)
+            val requestBody = RequestBody.create(
+                MediaType.parse("image/*"),
+                file
+            )
+            MultipartBody.Part.createFormData(
+                "files",
+                file.name,
+                requestBody
+            )
+        }
+
+        val productsRequestBody =
+            products.map { MultipartBody.Part.createFormData("products", it) }
+        val pricesRequestBody =
+            prices.map { MultipartBody.Part.createFormData("prices", it.toString()) }
+        val voucherIDRequestBody =
+            RequestBody.create(MediaType.parse("text/plain"), voucher!!.ID.toString())
+        val customerNameRequestBody =
+            RequestBody.create(MediaType.parse("text/plain"), "Truong Tuc Luan")
+        val customerPhoneRequestBody =
+            RequestBody.create(MediaType.parse("text/plain"), "0993426999")
+        val transactionIDRequestBody =
+            RequestBody.create(MediaType.parse("text/plain"), "177013")
+
+        exchangeVoucherUC(
+            token,
+            imagesRequestBody,
+            productsRequestBody,
+            pricesRequestBody,
+            voucherIDRequestBody,
+            customerNameRequestBody,
+            customerPhoneRequestBody,
+            transactionIDRequestBody
+        ).onEach { dataState ->
+            val copiedState = _exchangeState.value.copy()
+
+            copiedState.isLoading = dataState.isLoading
+
+            dataState.message?.let { msg ->
+                copiedState.message = msg
+            }
+
+            _exchangeState.value = copiedState
+        }.flowOn(Dispatchers.IO)
+            .launchIn(viewModelScope)
     }
 
     fun getCurrentProducts(): MutableList<String>? {
@@ -109,22 +179,23 @@ constructor(
 
     private suspend fun viewExchangeVoucher(token: String) {
         viewExchangeVoucherJob?.cancel()
-        viewExchangeVoucherJob = exchangeVoucherUC(token, products, prices).onEach { dataState ->
-            val copiedState = _viewExchangeState.value.copy()
+        viewExchangeVoucherJob =
+            viewExchangeVoucherUC(token, products, prices).onEach { dataState ->
+                val copiedState = _viewExchangeState.value.copy()
 
-            copiedState.isLoading = dataState.isLoading
+                copiedState.isLoading = dataState.isLoading
 
-            dataState.data?.let { data ->
-                copiedState.voucher = data
-            }
+                dataState.data?.let { data ->
+                    copiedState.voucher = data
+                }
 
-            dataState.message?.let { msg ->
-                copiedState.message = msg
-            }
+                dataState.message?.let { msg ->
+                    copiedState.message = msg
+                }
 
-            _viewExchangeState.value = copiedState
-        }.flowOn(Dispatchers.IO)
-            .launchIn(viewModelScope)
+                _viewExchangeState.value = copiedState
+            }.flowOn(Dispatchers.IO)
+                .launchIn(viewModelScope)
     }
 
     private suspend fun scanReceipt(bitmap: Bitmap) {

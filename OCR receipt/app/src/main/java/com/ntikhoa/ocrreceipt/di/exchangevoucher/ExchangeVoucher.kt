@@ -3,6 +3,7 @@ package com.ntikhoa.ocrreceipt.di.exchangevoucher
 import android.content.Context
 import com.ntikhoa.ocrreceipt.business.datasource.network.exchangevoucher.ExchangeVoucherService
 import com.ntikhoa.ocrreceipt.business.usecase.exchangevoucher.ExchangeVoucherUC
+import com.ntikhoa.ocrreceipt.business.usecase.exchangevoucher.ViewExchangeVoucherUC
 import com.ntikhoa.ocrreceipt.business.usecase.scanreceipt.ExtractReceiptUC
 import com.ntikhoa.ocrreceipt.business.usecase.scanreceipt.OCRUseCase
 import com.ntikhoa.ocrreceipt.business.usecase.scanreceipt.ProcessExtractedReceiptUC
@@ -46,6 +47,12 @@ object ExchangeVoucher {
     @Provides
     fun providesExchangeVoucherService(retrofitBuilder: Retrofit.Builder): ExchangeVoucherService {
         return retrofitBuilder.build().create(ExchangeVoucherService::class.java)
+    }
+
+    @ActivityRetainedScoped
+    @Provides
+    fun providesViewExchangeVoucherUC(service: ExchangeVoucherService): ViewExchangeVoucherUC {
+        return ViewExchangeVoucherUC(service = service)
     }
 
     @ActivityRetainedScoped

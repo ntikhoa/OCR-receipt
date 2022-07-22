@@ -3,12 +3,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/primary_blue"
     tools:context=".presentation.exchangevoucher.exchangedone.DoneExchangeFragment">
 
-    <ImageView
-        android:id="@+id/iv_evidence"
+    <TextView
+        android:id="@+id/tv_res"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center" />
+        android:layout_gravity="center"
+        android:textColor="@color/black"
+        android:textSize="20sp"
+        tools:text="Exchange Voucher Successfully" />
 
 </FrameLayout>

@@ -4,26 +4,24 @@ import android.app.Activity
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Matrix
-import androidx.activity.ComponentActivity
 import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.ImageProxy
+import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.ntikhoa.ocrreceipt.R
+import com.ntikhoa.ocrreceipt.business.domain.utils.Constants
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
-import org.opencv.android.Utils
-import org.opencv.core.Mat
+import java.io.ByteArrayOutputStream
 import java.io.File
+import java.io.FileOutputStream
 import java.nio.ByteBuffer
-
-fun convertToBitmap(mat: Mat): Bitmap {
-    val bitmap = Bitmap.createBitmap(mat.width(), mat.height(), Bitmap.Config.ARGB_8888)
-    Utils.matToBitmap(mat, bitmap)
-    return bitmap
-}
+import java.text.SimpleDateFormat
+import java.util.*
 
 fun imageProxyToBitmap(image: ImageProxy): Bitmap {
     val planeProxy = image.planes[0]
@@ -50,6 +48,26 @@ fun Activity.getOutputDir(): File {
         }
     }
     return if (mediaDir != null && mediaDir.exists()) mediaDir else filesDir
+}
+
+fun ViewModel.getImageUri(outputDir: File, image: Bitmap): File {
+    val path = File(
+        outputDir,
+        SimpleDateFormat(
+            Constants.FILE_NAME_FORMAT,
+            Locale.getDefault()
+        ).format(System.currentTimeMillis()) + ".jpg"
+    )
+    try {
+        val out = FileOutputStream(path)
+        image.compress(Bitmap.CompressFormat.JPEG, 100, out)
+        out.flush()
+        out.close()
+    } catch (e: Exception) {
+        e.printStackTrace()
+    }
+
+    return path
 }
 
 fun AppCompatActivity.repeatLifecycleFlow(flowCollect: suspend CoroutineScope.() -> Unit) {

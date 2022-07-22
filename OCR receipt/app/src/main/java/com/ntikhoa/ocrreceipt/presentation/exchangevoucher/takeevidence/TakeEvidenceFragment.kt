@@ -1,4 +1,4 @@
-package com.ntikhoa.ocrreceipt.presentation.exchangevoucher
+package com.ntikhoa.ocrreceipt.presentation.exchangevoucher.takeevidence
 
 import android.graphics.Bitmap
 import android.os.Bundle
@@ -7,6 +7,8 @@ import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.ntikhoa.ocrreceipt.R
 import com.ntikhoa.ocrreceipt.databinding.FragmentTakeEvidenceBinding
+import com.ntikhoa.ocrreceipt.presentation.exchangevoucher.ExchangeVoucherViewModel
+import com.ntikhoa.ocrreceipt.presentation.exchangevoucher.TakePhotoFragment
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint

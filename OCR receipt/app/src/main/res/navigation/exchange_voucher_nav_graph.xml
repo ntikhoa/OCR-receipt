@@ -68,7 +68,7 @@
     </fragment>
     <fragment
         android:id="@+id/takeEvidenceFragment"
-        android:name="com.ntikhoa.ocrreceipt.presentation.exchangevoucher.TakeEvidenceFragment"
+        android:name="com.ntikhoa.ocrreceipt.presentation.exchangevoucher.takeevidence.TakeEvidenceFragment"
         android:label="TakeEvidenceFragment"
         app:enterAnim="@anim/slide_in_right"
         app:exitAnim="@anim/slide_out_left"
