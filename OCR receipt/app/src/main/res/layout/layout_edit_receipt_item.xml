@@ -66,6 +66,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:enabled="false"
+                        android:fontFamily="@font/inter_medium"
                         android:gravity="center"
                         android:inputType="textMultiLine"
                         android:minHeight="56dp"
@@ -104,6 +105,7 @@
                     android:layout_gravity="start|top"
                     android:layout_marginStart="4dp"
                     android:backgroundTint="@color/white"
+                    android:fontFamily="@font/inter_medium"
                     android:textColor="@color/black"
                     tools:text="1" />
 

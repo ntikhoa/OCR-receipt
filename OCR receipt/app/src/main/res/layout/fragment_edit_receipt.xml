@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/primary_blue"
+    android:background="@drawable/gradient_main_background"
     android:orientation="vertical"
     tools:context=".presentation.exchangevoucher.editreceipt.EditReceiptFragment">
 
@@ -13,32 +13,54 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="20dp"
         android:orientation="horizontal"
         android:weightSum="100">
 
-        <TextView
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginEnd="8dp"
             android:layout_weight="68"
-            android:gravity="center"
-            android:text="Tên sản phẩm"
-            android:textColor="@color/white"
-            android:textSize="20sp" />
+            app:cardBackgroundColor="@color/primary_dark_blue"
+            app:cardCornerRadius="5dp">
 
-        <TextView
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="4dp"
+                android:layout_marginBottom="5dp"
+                android:fontFamily="@font/open_sans_semibold"
+                android:text="Tên sản phẩm"
+                android:textColor="@color/white"
+                android:textSize="18sp" />
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginEnd="16dp"
             android:layout_weight="32"
-            android:gravity="center"
-            android:text="Giá tiền"
-            android:textColor="@color/white"
-            android:textSize="20sp" />
+            app:cardBackgroundColor="@color/primary_dark_blue"
+            app:cardCornerRadius="5dp">
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="4dp"
+                android:layout_marginBottom="5dp"
+                android:fontFamily="@font/open_sans_semibold"
+                android:gravity="center"
+                android:text="Giá tiền"
+                android:textColor="@color/white"
+                android:textSize="18sp" />
+
+        </com.google.android.material.card.MaterialCardView>
 
     </LinearLayout>
 
