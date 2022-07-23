@@ -50,7 +50,9 @@
         android:gravity="center_horizontal"
         android:text="Xin hãy chụp bằng chứng\nchứng minh khách hàng đã nhận được quà"
         android:textColor="@color/white"
-        app:layout_constraintBottom_toTopOf="@+id/btn_take_photo" />
+        app:layout_constraintBottom_toTopOf="@+id/btn_take_photo"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <androidx.appcompat.widget.AppCompatImageButton
         android:id="@+id/btn_take_photo"
