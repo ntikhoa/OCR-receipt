@@ -26,8 +26,6 @@ class ChooseVoucherFragment : Fragment(R.layout.fragment_choose_voucher) {
 
     private val viewModel by activityViewModels<ExchangeVoucherViewModel>()
 
-    private var voucherIndex = -1
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -39,6 +37,8 @@ class ChooseVoucherFragment : Fragment(R.layout.fragment_choose_voucher) {
         _binding = FragmentChooseVoucherBinding.bind(view)
 
         initRecyclerView()
+
+        checkEnableDone()
 
         repeatLifecycleFlow {
             viewModel.viewExchangeState.collectLatest { dataState ->
@@ -56,23 +56,35 @@ class ChooseVoucherFragment : Fragment(R.layout.fragment_choose_voucher) {
 
         binding.apply {
             btnDone.setOnClickListener {
-                if (voucherIndex != -1 && viewModel.submitVoucher(voucherIndex) != null) {
-                    println(viewModel.voucher?.Name)
-                    findNavController().navigate(R.id.action_chooseVoucherFragment_to_getUserInfoFragment)
-                } else {
-                    Toast.makeText(context, "Vui lòng chọn khuyến mãi", Toast.LENGTH_SHORT).show()
-                }
+                findNavController().navigate(R.id.action_chooseVoucherFragment_to_getUserInfoFragment)
             }
+        }
+    }
+
+    private fun checkEnableDone() {
+        viewModel.voucher?.let {
+            setEnableDone(true, 1.0f)
+        } ?: run {
+            setEnableDone(false, 0.5f)
+        }
+    }
+
+    private fun setEnableDone(isEnabled: Boolean, alpha: Float) {
+        binding.btnDone.apply {
+            this.isEnabled = isEnabled
+            this.alpha = alpha
         }
     }
 
     private fun initRecyclerView() {
         binding.apply {
-            adapter = VoucherAdapter()
+            adapter = VoucherAdapter(viewModel.voucher?.ID)
             rvVoucher.adapter = adapter
             adapter.listener = object : VoucherAdapter.OnItemClickListener {
                 override fun onClick(position: Int) {
-                    voucherIndex = position
+                    if (viewModel.submitVoucher(position) != null) {
+                        setEnableDone(true, 1.0f)
+                    }
                 }
             }
         }
@@ -82,5 +94,10 @@ class ChooseVoucherFragment : Fragment(R.layout.fragment_choose_voucher) {
         super.onDestroyView()
         binding.rvVoucher.adapter = null
         _binding = null
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        viewModel.voucher = null
     }
 }

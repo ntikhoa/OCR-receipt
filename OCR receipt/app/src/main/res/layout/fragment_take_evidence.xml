@@ -48,7 +48,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="20dp"
         android:gravity="center_horizontal"
-        android:text="Xin hãy giữ hóa đơn thẳng và\nchụp ở nơi có ánh sáng tốt"
+        android:text="Xin hãy chụp bằng chứng\nchứng minh khách hàng đã nhận được quà"
         android:textColor="@color/white"
         app:layout_constraintBottom_toTopOf="@+id/btn_take_photo" />
 

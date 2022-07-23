@@ -4,6 +4,7 @@ import android.graphics.Bitmap
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.mlkit.vision.text.Text
+import com.ntikhoa.ocrreceipt.business.domain.model.CustomerInfo
 import com.ntikhoa.ocrreceipt.business.domain.model.Receipt
 import com.ntikhoa.ocrreceipt.business.domain.model.Voucher
 import com.ntikhoa.ocrreceipt.business.getImageUri
@@ -43,6 +44,7 @@ constructor(
     private val sessionManager: SessionManager,
 ) : ViewModel(), OnTriggerEvent<ExchangeVoucherEvent> {
 
+    var customerInfo = CustomerInfo()
     var croppedImage: Bitmap? = null
     var image: Bitmap? = null
 
@@ -51,7 +53,6 @@ constructor(
     private val products = mutableListOf<String>()
     private val prices = mutableListOf<Int>()
     var voucher: Voucher? = null
-        private set
 
     private val _state = MutableStateFlow(ScanReceiptState())
     val state get() = _state.asStateFlow()
@@ -117,11 +118,11 @@ constructor(
         val voucherIDRequestBody =
             RequestBody.create(MediaType.parse("text/plain"), voucher!!.ID.toString())
         val customerNameRequestBody =
-            RequestBody.create(MediaType.parse("text/plain"), "Truong Tuc Luan")
+            RequestBody.create(MediaType.parse("text/plain"), customerInfo.customerName)
         val customerPhoneRequestBody =
-            RequestBody.create(MediaType.parse("text/plain"), "0993426999")
+            RequestBody.create(MediaType.parse("text/plain"), customerInfo.customerPhone)
         val transactionIDRequestBody =
-            RequestBody.create(MediaType.parse("text/plain"), "177013")
+            RequestBody.create(MediaType.parse("text/plain"), customerInfo.transactionID)
 
         exchangeVoucherUC(
             token,

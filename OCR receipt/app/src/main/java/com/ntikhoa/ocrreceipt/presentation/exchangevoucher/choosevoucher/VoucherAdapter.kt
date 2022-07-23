@@ -1,6 +1,5 @@
 package com.ntikhoa.ocrreceipt.presentation.exchangevoucher.choosevoucher
 
-import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,11 +9,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.ntikhoa.ocrreceipt.R
 import com.ntikhoa.ocrreceipt.business.domain.model.Voucher
 import com.ntikhoa.ocrreceipt.databinding.LayoutVoucherItemBinding
-import com.ntikhoa.ocrreceipt.presentation.exchangevoucher.editreceipt.ReceiptAdapter.Companion.DIFF_CALLBACK
 
-class VoucherAdapter : ListAdapter<Voucher, VoucherAdapter.VoucherViewHolder>(DIFF_CALLBACK) {
-
-    private var current = -1
+class VoucherAdapter(var currentVoucherID: Int? = -1) :
+    ListAdapter<Voucher, VoucherAdapter.VoucherViewHolder>(DIFF_CALLBACK) {
 
     var listener: OnItemClickListener? = null
 
@@ -51,7 +48,7 @@ class VoucherAdapter : ListAdapter<Voucher, VoucherAdapter.VoucherViewHolder>(DI
             binding.ll.setOnClickListener {
                 val position = adapterPosition
                 if (position != RecyclerView.NO_POSITION) {
-                    current = position
+                    currentVoucherID = currentList[position].ID
                     notifyDataSetChanged()
                     listener?.onClick(position)
                 }
@@ -62,7 +59,7 @@ class VoucherAdapter : ListAdapter<Voucher, VoucherAdapter.VoucherViewHolder>(DI
             binding.apply {
                 tvVoucherName.text = voucher.Name
                 tvGift.text = voucher.GiftName
-                if (position == current) {
+                if (voucher.ID == currentVoucherID) {
                     ivChosen.visibility = View.VISIBLE
                 } else ivChosen.visibility = View.GONE
             }
