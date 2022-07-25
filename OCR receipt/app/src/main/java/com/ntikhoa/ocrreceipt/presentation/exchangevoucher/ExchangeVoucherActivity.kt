@@ -20,6 +20,8 @@ class ExchangeVoucherActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         _binding = ActivityExchangeVoucherBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        viewModel.onTriggerEvent(ExchangeVoucherEvent.BuildDocTermMatrix)
     }
 
     fun loading(isLoading: Boolean) {

@@ -7,4 +7,5 @@ sealed class ExchangeVoucherEvent {
     data class ScanReceipt(val bitmap: Bitmap) : ExchangeVoucherEvent()
     object ViewExchangeVoucher : ExchangeVoucherEvent()
     data class ExchangeVoucher(val outputDir: File) : ExchangeVoucherEvent()
+    object BuildDocTermMatrix : ExchangeVoucherEvent()
 }

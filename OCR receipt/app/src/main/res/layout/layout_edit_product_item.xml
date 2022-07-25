@@ -68,7 +68,7 @@
                         android:enabled="false"
                         android:fontFamily="@font/inter_medium"
                         android:gravity="center"
-                        android:inputType="textMultiLine"
+                        android:inputType="textCapCharacters|textMultiLine"
                         android:minHeight="56dp"
                         android:padding="0dp"
                         android:scrollHorizontally="false"
@@ -90,7 +90,7 @@
                     android:scaleType="centerCrop"
                     android:src="@drawable/ic_remove"
                     android:visibility="gone"
-                    app:tint="#FF0000" />
+                    app:tint="@color/primary_red" />
 
                 <View
                     android:id="@+id/view_edit_mode"
@@ -117,13 +117,22 @@
                 android:layout_marginHorizontal="8dp"
                 android:background="@color/gray_hint" />
 
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/cg_suggestion"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="14dp">\
+
+            </com.google.android.material.chip.ChipGroup>
+
             <LinearLayout
                 android:id="@+id/ll_edit"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"
                 android:orientation="horizontal"
-                android:visibility="gone">
+                android:visibility="gone"
+                tools:visibility="visible">
 
                 <ImageView
                     android:id="@+id/btn_cancel"

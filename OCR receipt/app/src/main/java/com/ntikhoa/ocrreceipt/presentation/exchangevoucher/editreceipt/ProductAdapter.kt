@@ -1,20 +1,25 @@
 package com.ntikhoa.ocrreceipt.presentation.exchangevoucher.editreceipt
 
 import android.content.Context
-import android.text.InputType
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
+import androidx.core.content.ContextCompat
+import androidx.core.content.res.ResourcesCompat
+import androidx.core.view.setPadding
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.chip.Chip
+import com.google.android.material.chip.ChipGroup
+import com.google.android.material.shape.ShapeAppearanceModel
 import com.ntikhoa.ocrreceipt.R
-import com.ntikhoa.ocrreceipt.databinding.LayoutEditReceiptItemBinding
+import com.ntikhoa.ocrreceipt.business.domain.model.ProductSearch
+import com.ntikhoa.ocrreceipt.databinding.LayoutEditProductItemBinding
 
-
-class ReceiptAdapter(private val isPrice: Boolean = false) :
-    ListAdapter<String, ReceiptAdapter.ReceiptViewHolder>(DIFF_CALLBACK) {
+class ProductAdapter :
+    ListAdapter<ProductSearch, ProductAdapter.ProductViewHolder>(DIFF_CALLBACK) {
 
     private lateinit var context: Context
 
@@ -24,48 +29,45 @@ class ReceiptAdapter(private val isPrice: Boolean = false) :
         this.onEditReceiptList = onEdit
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ReceiptViewHolder {
+    override fun onCreateViewHolder(
+        parent: ViewGroup,
+        viewType: Int
+    ): ProductViewHolder {
         context = parent.context
         val inflater = LayoutInflater.from(parent.context)
-        val view = inflater.inflate(R.layout.layout_edit_receipt_item, parent, false)
-        return ReceiptViewHolder(LayoutEditReceiptItemBinding.bind(view))
+        val view = inflater.inflate(R.layout.layout_edit_product_item, parent, false)
+        return ProductViewHolder(LayoutEditProductItemBinding.bind(view))
     }
 
-    override fun onBindViewHolder(holder: ReceiptViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: ProductViewHolder, position: Int) {
         val item = currentList[position]
         item?.let {
-            holder.bind(it)
+            holder.bind(it, position)
         }
     }
 
     companion object {
-        val DIFF_CALLBACK = object : DiffUtil.ItemCallback<String>() {
-            override fun areItemsTheSame(oldItem: String, newItem: String): Boolean {
-                return oldItem == newItem
+        val DIFF_CALLBACK = object : DiffUtil.ItemCallback<ProductSearch>() {
+            override fun areItemsTheSame(oldItem: ProductSearch, newItem: ProductSearch): Boolean {
+                return oldItem.productName == newItem.productName
             }
 
-            override fun areContentsTheSame(oldItem: String, newItem: String): Boolean {
-                return oldItem == newItem
+            override fun areContentsTheSame(
+                oldItem: ProductSearch,
+                newItem: ProductSearch
+            ): Boolean {
+                return true
             }
 
         }
     }
 
-    override fun submitList(list: MutableList<String>?) {
-        super.submitList(list)
-    }
-
-    inner class ReceiptViewHolder(private val binding: LayoutEditReceiptItemBinding) :
+    inner class ProductViewHolder(private val binding: LayoutEditProductItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
         init {
+            this.setIsRecyclable(false)
             binding.apply {
-                etReceipt.inputType = if (isPrice) {
-                    etReceipt.inputType or InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL
-                } else {
-                    etReceipt.inputType or InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS
-                }
-
                 viewEditMode.setOnClickListener {
                     val position = adapterPosition
                     if (position != RecyclerView.NO_POSITION) {
@@ -78,7 +80,7 @@ class ReceiptAdapter(private val isPrice: Boolean = false) :
                 btnCancel.setOnClickListener {
                     val position = adapterPosition
                     if (position != RecyclerView.NO_POSITION) {
-                        etReceipt.setText(currentList[position])
+                        etReceipt.setText(currentList[position].productName)
                         closeMode()
                     }
                 }
@@ -118,6 +120,13 @@ class ReceiptAdapter(private val isPrice: Boolean = false) :
                         notifyDataSetChanged()
                     }
                 }
+                cgSuggestion.setOnCheckedStateChangeListener(object :
+                    ChipGroup.OnCheckedStateChangeListener {
+                    override fun onCheckedChanged(group: ChipGroup, checkedIds: MutableList<Int>) {
+
+                    }
+
+                })
             }
         }
 
@@ -150,18 +159,24 @@ class ReceiptAdapter(private val isPrice: Boolean = false) :
             }
         }
 
-        fun bind(item: String) {
+        fun bind(item: ProductSearch, position: Int) {
             binding.apply {
                 tvIndex.text = (adapterPosition + 1).toString()
-                etReceipt.setText(item)
+                etReceipt.setText(item.productName)
+
+                for (productSearch in item.suggestion) {
+                    val chip = Chip(context)
+                    chip.text = productSearch
+                    chip.setTextColor(ContextCompat.getColor(context, R.color.white))
+                    chip.setChipBackgroundColorResource(R.color.primary_blue)
+                    chip.typeface = ResourcesCompat.getFont(context, R.font.inter_medium)
+                    chip.setOnClickListener {
+                        onEditReceiptList?.onDone(position, productSearch)
+                        notifyDataSetChanged()
+                    }
+                    cgSuggestion.addView(chip)
+                }
             }
         }
-    }
-
-    interface OnEditReceiptList {
-        fun onDone(position: Int, text: String)
-        fun onRemove(position: Int)
-        fun onAddTop(position: Int)
-        fun onAddBottom(position: Int)
     }
 }

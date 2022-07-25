@@ -1,8 +1,6 @@
 package com.ntikhoa.ocrreceipt.business.domain.model
 
-import com.google.gson.annotations.Expose
-import com.google.gson.annotations.SerializedName
-import com.ntikhoa.ocrreceipt.business.datasource.network.exchangevoucher.VoucherResponse
+import com.ntikhoa.ocrreceipt.business.datasource.network.exchangevoucher.response.VoucherResponse
 
 data class Voucher(
     val ID: Int,

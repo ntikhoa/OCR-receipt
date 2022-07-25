@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.mlkit.vision.text.Text
 import com.ntikhoa.ocrreceipt.business.domain.model.CustomerInfo
+import com.ntikhoa.ocrreceipt.business.domain.model.ProductSearch
 import com.ntikhoa.ocrreceipt.business.domain.model.Receipt
 import com.ntikhoa.ocrreceipt.business.domain.model.Voucher
 import com.ntikhoa.ocrreceipt.business.getImageUri
@@ -14,6 +15,8 @@ import com.ntikhoa.ocrreceipt.business.usecase.scanreceipt.ExtractReceiptUC
 import com.ntikhoa.ocrreceipt.business.usecase.scanreceipt.OCRUseCase
 import com.ntikhoa.ocrreceipt.business.usecase.scanreceipt.ProcessExtractedReceiptUC
 import com.ntikhoa.ocrreceipt.business.usecase.scanreceipt.ProcessImageUC
+import com.ntikhoa.ocrreceipt.business.usecase.fulltextsearch.BuildDocTermMatrixUC
+import com.ntikhoa.ocrreceipt.business.usecase.fulltextsearch.SearchProductsUC
 import com.ntikhoa.ocrreceipt.presentation.OnTriggerEvent
 import com.ntikhoa.ocrreceipt.presentation.SessionManager
 import com.ntikhoa.ocrreceipt.presentation.exchangevoucher.choosevoucher.ViewExchangeVoucherState
@@ -41,6 +44,8 @@ constructor(
     private val processExtractedReceiptUC: ProcessExtractedReceiptUC,
     private val viewExchangeVoucherUC: ViewExchangeVoucherUC,
     private val exchangeVoucherUC: ExchangeVoucherUC,
+    private val buildDocTermMatrixUC: BuildDocTermMatrixUC,
+    private val searchProductsUC: SearchProductsUC,
     private val sessionManager: SessionManager,
 ) : ViewModel(), OnTriggerEvent<ExchangeVoucherEvent> {
 
@@ -53,6 +58,8 @@ constructor(
     private val products = mutableListOf<String>()
     private val prices = mutableListOf<Int>()
     var voucher: Voucher? = null
+
+    private var docTermMatrix = mapOf<String, Map<String, Float>>()
 
     private val _state = MutableStateFlow(ScanReceiptState())
     val state get() = _state.asStateFlow()
@@ -68,6 +75,7 @@ constructor(
     private var extractReceiptJob: Job? = null
     private var processExtractReceiptJob: Job? = null
     private var viewExchangeVoucherJob: Job? = null
+    private var exchangeVoucherJob: Job? = null
 
 
     override fun onTriggerEvent(event: ExchangeVoucherEvent) {
@@ -92,8 +100,27 @@ constructor(
                             _viewExchangeState.value.copy(message = "Invalid Token")
                     }
                 }
+                is ExchangeVoucherEvent.BuildDocTermMatrix -> {
+                    sessionManager.token?.let {
+                        buildDocTermMatrix(it)
+                    } ?: run {
+                        _viewExchangeState.value =
+                            _viewExchangeState.value.copy(message = "Invalid Token")
+                    }
+                }
             }
         }
+    }
+
+    private suspend fun buildDocTermMatrix(token: String) {
+        buildDocTermMatrixUC(token).onEach { dataState ->
+
+            dataState.data?.let {
+                docTermMatrix = it
+            }
+
+        }.flowOn(Dispatchers.IO)
+            .launchIn(viewModelScope)
     }
 
     private suspend fun exchangeVoucher(token: String, outputDir: File) {
@@ -124,7 +151,8 @@ constructor(
         val transactionIDRequestBody =
             RequestBody.create(MediaType.parse("text/plain"), customerInfo.transactionID)
 
-        exchangeVoucherUC(
+        exchangeVoucherJob?.cancel()
+        exchangeVoucherJob = exchangeVoucherUC(
             token,
             imagesRequestBody,
             productsRequestBody,
@@ -147,12 +175,12 @@ constructor(
             .launchIn(viewModelScope)
     }
 
-    fun getCurrentProducts(): MutableList<String>? {
-        return state.value.receipt?.products
+    fun getCurrentProducts(): MutableList<ProductSearch>? {
+        return state.value.productsSearch
     }
 
     fun getCurrentPrices(): MutableList<String>? {
-        return state.value.receipt?.prices
+        return state.value.prices
     }
 
     fun submitReceipt() {
@@ -162,7 +190,7 @@ constructor(
         if (getCurrentProducts()?.size != getCurrentPrices()?.size) {
             throw Exception("Products and Prices does not match")
         }
-        getCurrentProducts()?.let { products.addAll(it) }
+        getCurrentProducts()?.let { products.addAll(it.map { productSearch -> productSearch.productName }) }
         getCurrentPrices()?.let {
             prices.addAll(
                 it.map { it.replace(",", "").toInt() }
@@ -267,8 +295,8 @@ constructor(
                 val copiedState = _state.value.copy()
 
                 dataState.data?.let {
-                    copiedState.isLoading = false
-                    copiedState.receipt = it
+                    copiedState.prices = it.prices
+                    searchProducts(it.products)
                 }
                 dataState.message?.let {
                     copiedState.isLoading = false
@@ -281,12 +309,38 @@ constructor(
             .launchIn(viewModelScope)
     }
 
+    private suspend fun searchProducts(products: List<String>) {
+        searchProductsUC(products, docTermMatrix)
+            .onEach { dataState ->
+                val copiedState = _state.value.copy()
+
+                dataState.data?.let {
+                    copiedState.isLoading = false
+                    copiedState.productsSearch = it.toMutableList()
+                }
+
+                dataState.message?.let {
+                    copiedState.isLoading = false
+                    copiedState.message = it
+                }
+
+                _state.value = copiedState
+
+            }.flowOn(Dispatchers.Default)
+            .launchIn(viewModelScope)
+    }
+
+    fun onClearedEditReceipt() {
+        _state.value = ScanReceiptState()
+    }
+
     fun cancelJobs() {
         processImageJob?.cancel()
         ocrJob?.cancel()
         extractReceiptJob?.cancel()
         processExtractReceiptJob?.cancel()
         viewExchangeVoucherJob?.cancel()
+        exchangeVoucherJob?.cancel()
     }
 
     override fun onCleared() {
