@@ -11,8 +11,10 @@ import kotlinx.coroutines.flow.flow
 class ProcessExtractedReceiptUC {
 
     private val khuyenmaiDic = mapOf(
+        ".HUYN" to true,
         "KHUYẾN" to true,
         "KHUYEN" to true,
+        "KHEYEN" to true,
         "KHUYEN" to true,
         "HUYEN" to true,
         "KHUYER" to true,
@@ -40,7 +42,9 @@ class ProcessExtractedReceiptUC {
         }
 
         val prices = receipt.prices.map {
-            it.replace(" ", "").replace(".", ",")
+            it.replace(" ", "")
+                .replace(".", ",")
+                .replace("O", "0")
         }
 
         emit(

@@ -99,6 +99,8 @@ class ExtractReceiptUC {
 
             if (lines[i].contains("[*|=|:]([*|=|:])+".toRegex())) {
                 lines.removeAt(i)
+            } else if (!lines[i].contains("[a-zA-Z]+".toRegex())) {
+                lines.removeAt(i)
             } else if (line.replace(".", "").trim().isDigitsOnly()) {
                 lines.removeAt(i)
             }

@@ -30,6 +30,15 @@
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@anim/slide_in_left"
             app:popExitAnim="@anim/slide_out_right" />
+        <action
+            android:id="@+id/action_editReceiptFragment_to_takeReceiptFragment"
+            app:destination="@id/takeReceiptFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"
+            app:popUpTo="@+id/exchange_voucher_nav_graph"
+            app:popUpToInclusive="false" />
     </fragment>
     <fragment
         android:id="@+id/cropImageFragment"
@@ -64,7 +73,11 @@
         tools:layout="@layout/fragment_get_user_info">
         <action
             android:id="@+id/action_getUserInfoFragment_to_takeEvidenceFragment"
-            app:destination="@id/takeEvidenceFragment" />
+            app:destination="@id/takeEvidenceFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
     </fragment>
     <fragment
         android:id="@+id/takeEvidenceFragment"
@@ -73,10 +86,14 @@
         app:enterAnim="@anim/slide_in_right"
         app:exitAnim="@anim/slide_out_left"
         app:popEnterAnim="@anim/slide_in_left"
-        app:popExitAnim="@anim/slide_out_right" >
+        app:popExitAnim="@anim/slide_out_right">
         <action
             android:id="@+id/action_takeEvidenceFragment_to_doneExchangeFragment"
-            app:destination="@id/doneExchangeFragment" />
+            app:destination="@id/doneExchangeFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
     </fragment>
     <fragment
         android:id="@+id/doneExchangeFragment"

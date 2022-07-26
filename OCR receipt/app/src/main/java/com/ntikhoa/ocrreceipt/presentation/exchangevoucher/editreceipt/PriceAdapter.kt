@@ -1,20 +1,19 @@
 package com.ntikhoa.ocrreceipt.presentation.exchangevoucher.editreceipt
 
 import android.content.Context
-import android.text.InputType
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.ntikhoa.ocrreceipt.R
-import com.ntikhoa.ocrreceipt.databinding.LayoutEditReceiptItemBinding
+import com.ntikhoa.ocrreceipt.databinding.LayoutEditPriceItemBinding
 
 
-class ReceiptAdapter(private val isPrice: Boolean = false) :
-    ListAdapter<String, ReceiptAdapter.ReceiptViewHolder>(DIFF_CALLBACK) {
+class PriceAdapter : ListAdapter<String, PriceAdapter.PriceViewHolder>(DIFF_CALLBACK) {
 
     private lateinit var context: Context
 
@@ -24,14 +23,14 @@ class ReceiptAdapter(private val isPrice: Boolean = false) :
         this.onEditReceiptList = onEdit
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ReceiptViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PriceViewHolder {
         context = parent.context
         val inflater = LayoutInflater.from(parent.context)
-        val view = inflater.inflate(R.layout.layout_edit_receipt_item, parent, false)
-        return ReceiptViewHolder(LayoutEditReceiptItemBinding.bind(view))
+        val view = inflater.inflate(R.layout.layout_edit_price_item, parent, false)
+        return PriceViewHolder(LayoutEditPriceItemBinding.bind(view))
     }
 
-    override fun onBindViewHolder(holder: ReceiptViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: PriceViewHolder, position: Int) {
         val item = currentList[position]
         item?.let {
             holder.bind(it)
@@ -51,21 +50,13 @@ class ReceiptAdapter(private val isPrice: Boolean = false) :
         }
     }
 
-    override fun submitList(list: MutableList<String>?) {
-        super.submitList(list)
-    }
-
-    inner class ReceiptViewHolder(private val binding: LayoutEditReceiptItemBinding) :
+    inner class PriceViewHolder(private val binding: LayoutEditPriceItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
         init {
-            binding.apply {
-                etReceipt.inputType = if (isPrice) {
-                    etReceipt.inputType or InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL
-                } else {
-                    etReceipt.inputType or InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS
-                }
+            this.setIsRecyclable(false)
 
+            binding.apply {
                 viewEditMode.setOnClickListener {
                     val position = adapterPosition
                     if (position != RecyclerView.NO_POSITION) {
@@ -154,14 +145,11 @@ class ReceiptAdapter(private val isPrice: Boolean = false) :
             binding.apply {
                 tvIndex.text = (adapterPosition + 1).toString()
                 etReceipt.setText(item)
+                if (item.contains("[^0-9,]".toRegex())) {
+                    tvIndex.setBackgroundColor(ContextCompat.getColor(context, R.color.primary_red))
+                    tvIndex.setTextColor(ContextCompat.getColor(context, R.color.white))
+                }
             }
         }
-    }
-
-    interface OnEditReceiptList {
-        fun onDone(position: Int, text: String)
-        fun onRemove(position: Int)
-        fun onAddTop(position: Int)
-        fun onAddBottom(position: Int)
     }
 }

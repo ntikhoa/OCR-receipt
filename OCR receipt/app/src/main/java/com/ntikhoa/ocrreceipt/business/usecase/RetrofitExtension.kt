@@ -3,6 +3,7 @@ package com.ntikhoa.ocrreceipt.business.usecase
 import com.ntikhoa.ocrreceipt.business.domain.utils.Constants
 import com.ntikhoa.ocrreceipt.business.domain.utils.DataState
 import retrofit2.HttpException
+import java.io.IOException
 import java.lang.Exception
 
 fun <T> handleUseCaseException(
@@ -18,6 +19,9 @@ fun <T> handleUseCaseException(
                 DataState(message = convertErrorBody(e))
             }
         }
+        is IOException -> {
+            DataState(message = Constants.NETWORK_ERROR)
+        }
         else -> {
             DataState(message = Constants.UNKNOWN_ERROR)
         }
@@ -31,6 +35,9 @@ fun <T> handleUseCaseException(
     return when (e) {
         is HttpException -> {
             DataState(message = convertErrorBody(e))
+        }
+        is IOException -> {
+            DataState(message = Constants.NETWORK_ERROR)
         }
         else -> {
             DataState(message = Constants.UNKNOWN_ERROR)

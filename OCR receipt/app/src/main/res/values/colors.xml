@@ -16,4 +16,5 @@
     <color name="primary_white">#F5F5F5</color>
     <color name="primary_black">#1F2023</color>
     <color name="gray_hint">#CBCCCD</color>
+    <color name="primary_red">#FF6643</color>
 </resources>

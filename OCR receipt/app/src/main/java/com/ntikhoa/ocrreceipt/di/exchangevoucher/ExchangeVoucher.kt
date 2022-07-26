@@ -2,12 +2,15 @@ package com.ntikhoa.ocrreceipt.di.exchangevoucher
 
 import android.content.Context
 import com.ntikhoa.ocrreceipt.business.datasource.network.exchangevoucher.ExchangeVoucherService
+import com.ntikhoa.ocrreceipt.business.process.VectorSpaceModel
 import com.ntikhoa.ocrreceipt.business.usecase.exchangevoucher.ExchangeVoucherUC
 import com.ntikhoa.ocrreceipt.business.usecase.exchangevoucher.ViewExchangeVoucherUC
 import com.ntikhoa.ocrreceipt.business.usecase.scanreceipt.ExtractReceiptUC
 import com.ntikhoa.ocrreceipt.business.usecase.scanreceipt.OCRUseCase
 import com.ntikhoa.ocrreceipt.business.usecase.scanreceipt.ProcessExtractedReceiptUC
 import com.ntikhoa.ocrreceipt.business.usecase.scanreceipt.ProcessImageUC
+import com.ntikhoa.ocrreceipt.business.usecase.fulltextsearch.BuildDocTermMatrixUC
+import com.ntikhoa.ocrreceipt.business.usecase.fulltextsearch.SearchProductsUC
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -59,5 +62,26 @@ object ExchangeVoucher {
     @Provides
     fun providesExchangeVoucherUC(service: ExchangeVoucherService): ExchangeVoucherUC {
         return ExchangeVoucherUC(service = service)
+    }
+
+    @ActivityRetainedScoped
+    @Provides
+    fun providesVectorSpaceModel(): VectorSpaceModel {
+        return VectorSpaceModel()
+    }
+
+    @ActivityRetainedScoped
+    @Provides
+    fun providesBuildDocTermMatrixUC(
+        service: ExchangeVoucherService,
+        model: VectorSpaceModel
+    ): BuildDocTermMatrixUC {
+        return BuildDocTermMatrixUC(service, model)
+    }
+
+    @ActivityRetainedScoped
+    @Provides
+    fun providesSearchProductsUC(): SearchProductsUC {
+        return SearchProductsUC()
     }
 }

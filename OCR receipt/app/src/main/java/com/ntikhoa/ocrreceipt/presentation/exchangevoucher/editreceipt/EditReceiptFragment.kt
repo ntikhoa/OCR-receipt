@@ -7,17 +7,14 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.ntikhoa.ocrreceipt.R
+import com.ntikhoa.ocrreceipt.business.domain.model.ProductSearch
 import com.ntikhoa.ocrreceipt.business.repeatLifecycleFlow
 import com.ntikhoa.ocrreceipt.databinding.FragmentEditReceiptBinding
 import com.ntikhoa.ocrreceipt.presentation.exchangevoucher.ExchangeVoucherActivity
 import com.ntikhoa.ocrreceipt.presentation.exchangevoucher.ExchangeVoucherEvent
 import com.ntikhoa.ocrreceipt.presentation.exchangevoucher.ExchangeVoucherViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class EditReceiptFragment : Fragment(R.layout.fragment_edit_receipt) {
@@ -25,8 +22,8 @@ class EditReceiptFragment : Fragment(R.layout.fragment_edit_receipt) {
     private var _binding: FragmentEditReceiptBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var productAdapter: ReceiptAdapter
-    private lateinit var priceAdapter: ReceiptAdapter
+    private lateinit var productAdapter: ProductAdapter
+    private lateinit var priceAdapter: PriceAdapter
 
     private val viewModel by activityViewModels<ExchangeVoucherViewModel>()
 
@@ -44,24 +41,56 @@ class EditReceiptFragment : Fragment(R.layout.fragment_edit_receipt) {
             viewModel.state.collectLatest {
                 (activity as ExchangeVoucherActivity).loading(it.isLoading)
 
-                it.receipt?.let { receipt ->
-                    var priceList = "Giá: \n"
-                    receipt.prices.forEach { item -> priceList = priceList + item + "\n" }
-                    priceList = priceList + "Sản phẩm\n"
-                    receipt.products.forEach { item -> priceList = priceList + item + "\n" }
-                    priceList += "\n\n RAW:\n" + receipt.visionText
-                    println(priceList)
+                it.prices?.let { prices ->
+                    priceAdapter.submitList(prices)
+                    val mutablePrices = viewModel.getCurrentPrices()!!
+                    priceAdapter.setOnEditReceiptList(object : OnEditReceiptList {
+                        override fun onDone(position: Int, text: String) {
+                            mutablePrices[position] = text
+                            priceAdapter.submitList(mutablePrices)
+                        }
 
-                    productAdapter.submitList(receipt.products)
-                    priceAdapter.submitList(receipt.prices)
+                        override fun onRemove(position: Int) {
+                            mutablePrices.removeAt(position)
+                            priceAdapter.submitList(mutablePrices)
+                        }
 
-                    viewModel.getCurrentProducts()?.let {
-                        productAdapter.setOnEditReceiptList(setAdapterListener(it, productAdapter))
-                    }
+                        override fun onAddTop(position: Int) {
+                            mutablePrices.add(position, "")
+                            priceAdapter.submitList(mutablePrices)
+                        }
 
-                    viewModel.getCurrentPrices()?.let {
-                        priceAdapter.setOnEditReceiptList(setAdapterListener(it, priceAdapter))
-                    }
+                        override fun onAddBottom(position: Int) {
+                            mutablePrices.add(position + 1, "")
+                            priceAdapter.submitList(mutablePrices)
+                        }
+                    })
+                }
+
+                it.productsSearch?.let { productsSearch ->
+                    productAdapter.submitList(productsSearch)
+                    val mutableProducts = viewModel.getCurrentProducts()!!
+                    productAdapter.setOnEditReceiptList(object : OnEditReceiptList {
+                        override fun onDone(position: Int, text: String) {
+                            mutableProducts[position].productName = text
+                            productAdapter.submitList(mutableProducts)
+                        }
+
+                        override fun onRemove(position: Int) {
+                            mutableProducts.removeAt(position)
+                            productAdapter.submitList(mutableProducts)
+                        }
+
+                        override fun onAddTop(position: Int) {
+                            mutableProducts.add(position, ProductSearch())
+                            productAdapter.submitList(mutableProducts)
+                        }
+
+                        override fun onAddBottom(position: Int) {
+                            mutableProducts.add(position + 1, ProductSearch())
+                            productAdapter.submitList(mutableProducts)
+                        }
+                    })
                 }
 
                 it.message?.let {
@@ -69,8 +98,6 @@ class EditReceiptFragment : Fragment(R.layout.fragment_edit_receipt) {
                 }
             }
         }
-
-//        viewModel.onTriggerEvent(ExchangeVoucherEvent.ScanReceipt(viewModel.croppedImage!!))
 
         binding.apply {
             btnDone.setOnClickListener {
@@ -81,44 +108,25 @@ class EditReceiptFragment : Fragment(R.layout.fragment_edit_receipt) {
                     Toast.makeText(context, e.message, Toast.LENGTH_SHORT).show()
                 }
             }
+
+            btnAddReceipt.setOnClickListener {
+                try {
+                    viewModel.submitReceipt()
+                    findNavController().navigate(R.id.action_editReceiptFragment_to_takeReceiptFragment)
+                } catch (e: Exception) {
+                    Toast.makeText(context, e.message, Toast.LENGTH_SHORT).show()
+                }
+            }
         }
     }
 
     private fun initRecyclerView() {
         binding.apply {
-            productAdapter = ReceiptAdapter(false)
+            productAdapter = ProductAdapter()
             rvProduct.adapter = productAdapter
 
-            priceAdapter = ReceiptAdapter(true)
+            priceAdapter = PriceAdapter()
             rvPrice.adapter = priceAdapter
-        }
-    }
-
-    private fun setAdapterListener(
-        mutableList: MutableList<String>,
-        adapter: ReceiptAdapter
-    ): ReceiptAdapter.OnEditReceiptList {
-        return object : ReceiptAdapter.OnEditReceiptList {
-            override fun onDone(position: Int, text: String) {
-                mutableList[position] = text
-                adapter.submitList(mutableList)
-            }
-
-            override fun onRemove(position: Int) {
-                mutableList.removeAt(position)
-                adapter.submitList(mutableList)
-            }
-
-            override fun onAddTop(position: Int) {
-                mutableList.add(position, "")
-                adapter.submitList(mutableList)
-            }
-
-            override fun onAddBottom(position: Int) {
-                mutableList.add(position + 1, "")
-                adapter.submitList(mutableList)
-            }
-
         }
     }
 
@@ -129,5 +137,10 @@ class EditReceiptFragment : Fragment(R.layout.fragment_edit_receipt) {
             rvProduct.adapter = null
         }
         _binding = null
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        viewModel.onClearedEditReceipt()
     }
 }

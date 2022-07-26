@@ -81,7 +81,7 @@
             android:orientation="vertical"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             tools:itemCount="5"
-            tools:listitem="@layout/layout_edit_receipt_item" />
+            tools:listitem="@layout/layout_edit_price_item" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_price"
@@ -93,7 +93,7 @@
             android:orientation="vertical"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             tools:itemCount="5"
-            tools:listitem="@layout/layout_edit_receipt_item" />
+            tools:listitem="@layout/layout_edit_price_item" />
 
     </LinearLayout>
 
