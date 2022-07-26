@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.flow
 class ProcessExtractedReceiptUC {
 
     private val khuyenmaiDic = mapOf(
+        ".HUYN" to true,
         "KHUYẾN" to true,
         "KHUYEN" to true,
         "KHEYEN" to true,

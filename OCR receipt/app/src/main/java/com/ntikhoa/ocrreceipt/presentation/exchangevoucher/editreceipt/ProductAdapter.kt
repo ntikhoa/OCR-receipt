@@ -120,13 +120,6 @@ class ProductAdapter :
                         notifyDataSetChanged()
                     }
                 }
-                cgSuggestion.setOnCheckedStateChangeListener(object :
-                    ChipGroup.OnCheckedStateChangeListener {
-                    override fun onCheckedChanged(group: ChipGroup, checkedIds: MutableList<Int>) {
-
-                    }
-
-                })
             }
         }
 

@@ -108,6 +108,15 @@ class EditReceiptFragment : Fragment(R.layout.fragment_edit_receipt) {
                     Toast.makeText(context, e.message, Toast.LENGTH_SHORT).show()
                 }
             }
+
+            btnAddReceipt.setOnClickListener {
+                try {
+                    viewModel.submitReceipt()
+                    findNavController().navigate(R.id.action_editReceiptFragment_to_takeReceiptFragment)
+                } catch (e: Exception) {
+                    Toast.makeText(context, e.message, Toast.LENGTH_SHORT).show()
+                }
+            }
         }
     }
 
