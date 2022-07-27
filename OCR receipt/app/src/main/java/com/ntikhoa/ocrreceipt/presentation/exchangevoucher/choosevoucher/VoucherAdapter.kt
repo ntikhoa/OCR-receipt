@@ -1,5 +1,6 @@
 package com.ntikhoa.ocrreceipt.presentation.exchangevoucher.choosevoucher
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,7 +14,26 @@ import com.ntikhoa.ocrreceipt.databinding.LayoutVoucherItemBinding
 class VoucherAdapter(var currentVoucherID: Int? = -1) :
     ListAdapter<Voucher, VoucherAdapter.VoucherViewHolder>(DIFF_CALLBACK) {
 
-    var listener: OnItemClickListener? = null
+    private var listener: OnItemClickListener? = null
+    private var infoListener: OnInfoClickListener? = null
+
+    fun setOnItemClickListener(listener: (position: Int) -> Unit) {
+        this.listener =  object: OnItemClickListener {
+            override fun onClick(position: Int) {
+                listener(position)
+            }
+        }
+    }
+
+    fun setOnInfoClickListener(listener: (voucher: Voucher) -> Unit) {
+        this.infoListener = object: OnInfoClickListener {
+            override fun onClick(voucher: Voucher) {
+                listener(voucher)
+            }
+        }
+    }
+
+    private lateinit var context: Context
 
     companion object {
         val DIFF_CALLBACK = object : DiffUtil.ItemCallback<Voucher>() {
@@ -29,6 +49,7 @@ class VoucherAdapter(var currentVoucherID: Int? = -1) :
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VoucherViewHolder {
+        context = parent.context
         val inflater = LayoutInflater.from(parent.context)
         val view = inflater.inflate(R.layout.layout_voucher_item, parent, false)
         return VoucherViewHolder(LayoutVoucherItemBinding.bind(view))
@@ -53,6 +74,14 @@ class VoucherAdapter(var currentVoucherID: Int? = -1) :
                     listener?.onClick(position)
                 }
             }
+
+            binding.ivInfo.setOnClickListener {
+                val position = adapterPosition
+                if (position != RecyclerView.NO_POSITION) {
+                    val voucher = currentList[position]
+                    infoListener?.onClick(voucher)
+                }
+            }
         }
 
         fun bind(voucher: Voucher, position: Int) {
@@ -68,5 +97,9 @@ class VoucherAdapter(var currentVoucherID: Int? = -1) :
 
     interface OnItemClickListener {
         fun onClick(position: Int)
+    }
+
+    interface OnInfoClickListener {
+        fun onClick(voucher: Voucher)
     }
 }

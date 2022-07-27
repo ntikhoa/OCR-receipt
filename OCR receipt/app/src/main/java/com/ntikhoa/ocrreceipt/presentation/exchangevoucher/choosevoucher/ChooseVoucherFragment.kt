@@ -1,6 +1,5 @@
 package com.ntikhoa.ocrreceipt.presentation.exchangevoucher.choosevoucher
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
@@ -8,6 +7,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.ntikhoa.ocrreceipt.R
+import com.ntikhoa.ocrreceipt.business.domain.model.Voucher
 import com.ntikhoa.ocrreceipt.business.repeatLifecycleFlow
 import com.ntikhoa.ocrreceipt.databinding.FragmentChooseVoucherBinding
 import com.ntikhoa.ocrreceipt.presentation.exchangevoucher.ExchangeVoucherActivity
@@ -80,12 +80,15 @@ class ChooseVoucherFragment : Fragment(R.layout.fragment_choose_voucher) {
         binding.apply {
             adapter = VoucherAdapter(viewModel.voucher?.ID)
             rvVoucher.adapter = adapter
-            adapter.listener = object : VoucherAdapter.OnItemClickListener {
-                override fun onClick(position: Int) {
-                    if (viewModel.submitVoucher(position) != null) {
-                        setEnableDone(true, 1.0f)
-                    }
+
+            adapter.setOnItemClickListener { position ->
+                if (viewModel.submitVoucher(position) != null) {
+                    setEnableDone(true, 1.0f)
                 }
+            }
+
+            adapter.setOnInfoClickListener { voucher ->
+                VoucherDetailDialog(requireActivity(), voucher).show()
             }
         }
     }

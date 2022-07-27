@@ -5,7 +5,6 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.activity.viewModels
 import com.ntikhoa.ocrreceipt.databinding.ActivityHomeBinding
-import com.ntikhoa.ocrreceipt.presentation.TakePhotoActivity
 import com.ntikhoa.ocrreceipt.presentation.exchangevoucher.ExchangeVoucherActivity
 import dagger.hilt.android.AndroidEntryPoint
 

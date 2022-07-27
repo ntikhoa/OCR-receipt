@@ -77,7 +77,7 @@ class GetUserInfoFragment : Fragment(R.layout.fragment_get_user_info) {
     }
 
     private fun setVoucherInfo(voucher: Voucher) {
-        binding.apply {
+        binding.layoutVoucher.apply {
             tvVoucherName.text = voucher.Name
             tvGiftName.text = voucher.GiftName
             tvDescription.text = voucher.Description
