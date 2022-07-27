@@ -117,6 +117,13 @@ class EditReceiptFragment : Fragment(R.layout.fragment_edit_receipt) {
                     Toast.makeText(context, e.message, Toast.LENGTH_SHORT).show()
                 }
             }
+
+            dfabViewReceipt.setOnClickListener {
+                viewModel.croppedImage?.let {
+                    val dialog = ReceiptImageDialog(requireContext(), it)
+                    dialog.show()
+                }
+            }
         }
     }
 
