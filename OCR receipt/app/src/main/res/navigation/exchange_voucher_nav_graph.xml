@@ -99,5 +99,15 @@
         android:id="@+id/doneExchangeFragment"
         android:name="com.ntikhoa.ocrreceipt.presentation.exchangevoucher.exchangedone.DoneExchangeFragment"
         android:label="fragment_done_exchange"
-        tools:layout="@layout/fragment_done_exchange" />
+        tools:layout="@layout/fragment_done_exchange">
+        <action
+            android:id="@+id/action_doneExchangeFragment_to_takeReceiptFragment"
+            app:destination="@id/takeReceiptFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"
+            app:popUpTo="@+id/exchange_voucher_nav_graph"
+            app:popUpToInclusive="false" />
+    </fragment>
 </navigation>

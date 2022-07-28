@@ -23,16 +23,15 @@
 
     <ImageView
         android:id="@+id/btn_back"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_margin="32dp"
         android:clickable="true"
         android:focusable="true"
         android:foreground="?android:attr/selectableItemBackground"
         android:src="@drawable/ic_back_arrow"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:tint="@color/white" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab_dev"
@@ -56,17 +55,17 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <androidx.appcompat.widget.AppCompatImageButton
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btn_take_photo"
         android:layout_width="@dimen/take_photo_btn_size"
         android:layout_height="@dimen/take_photo_btn_size"
         android:layout_marginBottom="32dp"
-        android:background="@color/transparent"
+        android:background="@drawable/ic_take_photo_btn"
         android:clickable="true"
+        android:elevation="10dp"
         android:focusable="true"
         android:foreground="?android:attr/selectableItemBackground"
         android:scaleType="centerCrop"
-        android:src="@drawable/ic_take_photo_btn"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />

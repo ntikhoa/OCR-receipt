@@ -19,12 +19,11 @@
         android:visibility="gone">
 
         <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
             android:layout_gravity="center"
             android:layout_margin="10dp"
-            android:src="@drawable/ic_plus"
-            app:tint="@color/gray_hint" />
+            android:src="@drawable/ic_plus" />
 
     </FrameLayout>
 
@@ -79,8 +78,8 @@
 
                 <ImageButton
                     android:id="@+id/btn_remove"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
                     android:layout_gravity="end|top"
                     android:backgroundTint="@color/white"
                     android:clickable="true"
@@ -90,6 +89,7 @@
                     android:scaleType="centerCrop"
                     android:src="@drawable/ic_remove"
                     android:visibility="gone"
+                    tools:visibility="visible"
                     app:tint="@color/primary_red" />
 
                 <View
@@ -121,7 +121,7 @@
                 android:id="@+id/cg_suggestion"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="14dp">\
+                android:layout_marginHorizontal="14dp">
 
             </com.google.android.material.chip.ChipGroup>
 
@@ -138,9 +138,8 @@
                     android:id="@+id/btn_cancel"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
-                    android:layout_gravity="end"
-                    android:layout_marginVertical="5dp"
                     android:layout_marginStart="14dp"
+                    android:layout_marginBottom="5dp"
                     android:clickable="true"
                     android:focusable="true"
                     android:foreground="?android:attr/selectableItemBackground"
@@ -156,9 +155,8 @@
                     android:id="@+id/btn_done"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
-                    android:layout_gravity="end"
-                    android:layout_marginVertical="5dp"
                     android:layout_marginEnd="14dp"
+                    android:layout_marginBottom="5dp"
                     android:clickable="true"
                     android:focusable="true"
                     android:foreground="?android:attr/selectableItemBackground"
@@ -184,12 +182,11 @@
         android:visibility="gone">
 
         <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
             android:layout_gravity="center"
             android:layout_margin="10dp"
-            android:src="@drawable/ic_plus"
-            app:tint="@color/gray_hint" />
+            android:src="@drawable/ic_plus" />
 
     </FrameLayout>
 

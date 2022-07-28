@@ -2,8 +2,8 @@
 <resources>
     <dimen name="login_corner_radius">5dp</dimen>
     <dimen name="home_corner_radius">10dp</dimen>
-    <dimen name="home_card_size">121dp</dimen>
-    <dimen name="home_half_card_size">60.5dp</dimen>
+    <dimen name="home_card_size">120dp</dimen>
+    <dimen name="home_half_card_size">64dp</dimen>
     <dimen name="take_photo_btn_size">68dp</dimen>
     <dimen name="take_photo_half_btn_size">34dp</dimen>
 </resources>

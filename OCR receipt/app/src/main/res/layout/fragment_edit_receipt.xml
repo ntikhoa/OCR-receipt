@@ -115,28 +115,26 @@
 
             <ImageButton
                 android:id="@+id/btn_cancel"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_marginStart="42dp"
                 android:background="@color/transparent"
                 android:clickable="true"
                 android:focusable="true"
                 android:foreground="?android:attr/selectableItemBackground"
-                android:padding="5dp"
-                android:scaleType="centerInside"
                 android:src="@drawable/ic_back_arrow"
-                app:layout_constraintBottom_toBottomOf="parent"
+                app:flow_horizontalBias="0.5"
+                app:layout_constraintBottom_toBottomOf="@+id/btn_add_receipt"
                 app:layout_constraintEnd_toStartOf="@+id/btn_add_receipt"
-                app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintHorizontal_chainStyle="spread_inside"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
                 app:tint="@color/primary_dark_blue" />
 
             <ImageButton
                 android:id="@+id/btn_add_receipt"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="16dp"
                 android:background="@color/transparent"
                 android:clickable="true"
                 android:focusable="true"
@@ -151,25 +149,23 @@
 
             <ImageButton
                 android:id="@+id/btn_edit"
-                android:layout_width="28dp"
-                android:layout_height="28dp"
-                android:layout_marginVertical="16dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:background="@color/transparent"
                 android:clickable="true"
                 android:focusable="true"
                 android:foreground="?android:attr/selectableItemBackground"
                 android:scaleType="centerInside"
                 android:src="@drawable/ic_edit"
-                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintBottom_toBottomOf="@+id/btn_add_receipt"
                 app:layout_constraintEnd_toStartOf="@+id/btn_done"
                 app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintStart_toEndOf="@+id/btn_add_receipt"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintStart_toEndOf="@+id/btn_add_receipt" />
 
             <ImageButton
                 android:id="@+id/btn_done"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_marginEnd="42dp"
                 android:background="@color/transparent"
                 android:clickable="true"
@@ -177,11 +173,10 @@
                 android:foreground="?android:attr/selectableItemBackground"
                 android:scaleType="centerInside"
                 android:src="@drawable/ic_done"
-                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintBottom_toBottomOf="@+id/btn_edit"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintStart_toEndOf="@+id/btn_edit"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintStart_toEndOf="@+id/btn_edit" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </LinearLayout>

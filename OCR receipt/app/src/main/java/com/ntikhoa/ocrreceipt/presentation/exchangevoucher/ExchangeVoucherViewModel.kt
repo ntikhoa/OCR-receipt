@@ -166,6 +166,10 @@ constructor(
 
             copiedState.isLoading = dataState.isLoading
 
+            dataState.data?.let {
+                copiedState.data = it
+            }
+
             dataState.message?.let { msg ->
                 copiedState.message = msg
             }
@@ -332,6 +336,10 @@ constructor(
 
     fun onClearedEditReceipt() {
         _state.value = ScanReceiptState()
+    }
+
+    fun onCleardDoneExchange() {
+        _exchangeState.value = ExchangeVoucherState()
     }
 
     fun cancelJobs() {

@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
+import androidx.navigation.fragment.findNavController
 import com.ntikhoa.ocrreceipt.R
 import com.ntikhoa.ocrreceipt.business.getOutputDir
 import com.ntikhoa.ocrreceipt.business.repeatLifecycleFlow
@@ -34,12 +35,22 @@ class DoneExchangeFragment : Fragment(R.layout.fragment_done_exchange) {
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentDoneExchangeBinding.bind(view)
 
+        binding.btnHome.setOnClickListener {
+            findNavController().navigate(R.id.action_doneExchangeFragment_to_takeReceiptFragment)
+        }
+
         repeatLifecycleFlow {
             viewModel.exchangeState.collectLatest { dataState ->
                 (requireActivity() as ExchangeVoucherActivity).loading(dataState.isLoading)
 
+                dataState.data?.let {
+                    binding.ivExchange.setImageResource(R.drawable.ic_exchange_successfully)
+                    binding.tvExchange.text = "Đổi quà tặng thành công!"
+                }
+
                 dataState.message?.let {
-                    binding.tvRes.text = it
+                    binding.ivExchange.setImageResource(R.drawable.ic_exchange_failed)
+                    binding.tvExchange.text = "Đổi quà tặng thất bại!\n" + it
                 }
             }
         }
@@ -48,5 +59,10 @@ class DoneExchangeFragment : Fragment(R.layout.fragment_done_exchange) {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        viewModel.onCleardDoneExchange()
     }
 }

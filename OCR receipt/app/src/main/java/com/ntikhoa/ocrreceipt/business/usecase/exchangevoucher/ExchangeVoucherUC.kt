@@ -15,13 +15,13 @@ class ExchangeVoucherUC(private val service: ExchangeVoucherService) {
     suspend operator fun invoke(
         token: String,
         image: List<MultipartBody.Part>,
-        products:  List<MultipartBody.Part>,
-        prices:  List<MultipartBody.Part>,
+        products: List<MultipartBody.Part>,
+        prices: List<MultipartBody.Part>,
         voucherId: RequestBody,
         customerName: RequestBody,
         customerPhone: RequestBody,
         transactionID: RequestBody,
-    ): Flow<DataState<Any?>> = flow {
+    ): Flow<DataState<String>> = flow {
 
         emit(DataState.loading())
 
@@ -36,7 +36,7 @@ class ExchangeVoucherUC(private val service: ExchangeVoucherService) {
             transactionID
         )
 
-        emit(DataState<Any?>(message = res.message))
+        emit(DataState.data(data = res.message))
     }.catch {
         emit(handleUseCaseException(it))
     }

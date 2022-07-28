@@ -19,8 +19,7 @@
             android:id="@+id/iv_receipt"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:scaleType="centerInside"
-            android:src="@drawable/receipt2" />
+            android:scaleType="centerInside" />
 
     </androidx.cardview.widget.CardView>
 

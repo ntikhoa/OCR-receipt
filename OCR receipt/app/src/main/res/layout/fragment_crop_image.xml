@@ -33,17 +33,15 @@
 
         <ImageButton
             android:id="@+id/btn_cancel"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="16dp"
             android:layout_marginStart="42dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="16dp"
             android:background="@color/transparent"
             android:clickable="true"
             android:focusable="true"
             android:foreground="?android:attr/selectableItemBackground"
             android:padding="5dp"
-            android:scaleType="centerCrop"
             android:src="@drawable/ic_back_arrow"
             app:tint="@color/primary_dark_blue" />
 
@@ -55,16 +53,14 @@
 
         <ImageButton
             android:id="@+id/btn_done"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_marginTop="8dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="16dp"
             android:layout_marginEnd="42dp"
-            android:layout_marginBottom="16dp"
             android:background="@color/transparent"
             android:clickable="true"
             android:focusable="true"
             android:foreground="?android:attr/selectableItemBackground"
-            android:scaleType="centerCrop"
             android:src="@drawable/ic_done" />
 
     </LinearLayout>
