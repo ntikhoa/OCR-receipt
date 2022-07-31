@@ -5,13 +5,11 @@ import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.ntikhoa.ocrreceipt.business.datasource.datastore.AppDataStore
 import com.ntikhoa.ocrreceipt.business.datasource.datastore.AppDataStoreImpl
-import com.ntikhoa.ocrreceipt.business.datasource.network.auth.AuthService
 import com.ntikhoa.ocrreceipt.business.domain.utils.Constants
 import com.ntikhoa.ocrreceipt.presentation.SessionManager
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.scopes.ActivityRetainedScoped
 import dagger.hilt.components.SingletonComponent
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory

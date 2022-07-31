@@ -36,7 +36,8 @@ class DoneExchangeFragment : Fragment(R.layout.fragment_done_exchange) {
         _binding = FragmentDoneExchangeBinding.bind(view)
 
         binding.btnHome.setOnClickListener {
-            findNavController().navigate(R.id.action_doneExchangeFragment_to_takeReceiptFragment)
+            requireActivity().finish()
+//            findNavController().navigate(R.id.action_doneExchangeFragment_to_takeReceiptFragment)
         }
 
         repeatLifecycleFlow {

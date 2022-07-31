@@ -5,7 +5,9 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.activity.viewModels
 import com.ntikhoa.ocrreceipt.databinding.ActivityHomeBinding
+import com.ntikhoa.ocrreceipt.presentation.auth.LoginActivity
 import com.ntikhoa.ocrreceipt.presentation.exchangevoucher.ExchangeVoucherActivity
+import com.ntikhoa.ocrreceipt.presentation.profile.ProfileActivity
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -24,9 +26,24 @@ class HomeActivity : AppCompatActivity() {
             tvHello.text = viewModel.getFirstName()
 
             cardPhoto.setOnClickListener {
-                val intent = Intent(applicationContext, ExchangeVoucherActivity::class.java)
-                startActivity(intent)
+                val exchangeVoucherIntent =
+                    Intent(applicationContext, ExchangeVoucherActivity::class.java)
+                startActivity(exchangeVoucherIntent)
             }
+
+            cardProfile.setOnClickListener {
+                val profileIntent = Intent(applicationContext, ProfileActivity::class.java)
+                startActivity(profileIntent)
+            }
+        }
+    }
+
+    override fun onRestart() {
+        super.onRestart()
+        if (!viewModel.isAuth()) {
+            val loginIntent = Intent(applicationContext, LoginActivity::class.java)
+            startActivity(loginIntent)
+            finish()
         }
     }
 

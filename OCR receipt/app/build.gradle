@@ -88,10 +88,16 @@ dependencies {
     def datastore = "1.0.0"
     implementation "androidx.datastore:datastore-preferences:$datastore"
 
-    def nav_version = "2.5.0-rc02"
+    def nav_version = "2.5.0"
     implementation("androidx.navigation:navigation-fragment-ktx:$nav_version")
     implementation("androidx.navigation:navigation-ui-ktx:$nav_version")
 
     def image_cropper_version = "4.3.0"
     implementation "com.github.CanHub:Android-Image-Cropper:$image_cropper_version"
+
+    //Circle Image View
+    implementation 'de.hdodenhof:circleimageview:3.1.0'
+
+    //Load image
+    implementation 'com.squareup.picasso:picasso:2.71828'
 }
