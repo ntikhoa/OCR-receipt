@@ -14,4 +14,8 @@ constructor(
     fun getFirstName(): String {
         return "Xin Chào, ${sessionManager.name?.split(" ")?.last() ?: " Thế Giới"}!"
     }
+
+    fun isAuth(): Boolean {
+        return sessionManager.token != null
+    }
 }
