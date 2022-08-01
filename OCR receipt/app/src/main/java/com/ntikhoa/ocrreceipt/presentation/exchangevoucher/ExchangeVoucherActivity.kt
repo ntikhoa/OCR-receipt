@@ -3,7 +3,6 @@ package com.ntikhoa.ocrreceipt.presentation.exchangevoucher
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.activity.viewModels
-import com.ntikhoa.ocrreceipt.R
 import com.ntikhoa.ocrreceipt.databinding.ActivityExchangeVoucherBinding
 import com.ntikhoa.ocrreceipt.presentation.setVisibility
 import dagger.hilt.android.AndroidEntryPoint
