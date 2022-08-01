@@ -8,6 +8,7 @@ import com.ntikhoa.ocrreceipt.databinding.ActivityHomeBinding
 import com.ntikhoa.ocrreceipt.presentation.auth.LoginActivity
 import com.ntikhoa.ocrreceipt.presentation.exchangevoucher.ExchangeVoucherActivity
 import com.ntikhoa.ocrreceipt.presentation.profile.ProfileActivity
+import com.ntikhoa.ocrreceipt.presentation.transaction.TransactionHistoryActivity
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -34,6 +35,12 @@ class HomeActivity : AppCompatActivity() {
             cardProfile.setOnClickListener {
                 val profileIntent = Intent(applicationContext, ProfileActivity::class.java)
                 startActivity(profileIntent)
+            }
+
+            cardHistory.setOnClickListener {
+                val historyIntent =
+                    Intent(applicationContext, TransactionHistoryActivity::class.java)
+                startActivity(historyIntent)
             }
         }
     }

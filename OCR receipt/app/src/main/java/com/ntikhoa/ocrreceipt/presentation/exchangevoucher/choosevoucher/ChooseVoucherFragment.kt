@@ -80,7 +80,7 @@ class ChooseVoucherFragment : Fragment(R.layout.fragment_choose_voucher) {
         binding.apply {
             adapter = VoucherAdapter(viewModel.voucher?.ID)
             rvVoucher.adapter = adapter
-
+            
             adapter.setOnItemClickListener { position ->
                 if (viewModel.submitVoucher(position) != null) {
                     setEnableDone(true, 1.0f)
