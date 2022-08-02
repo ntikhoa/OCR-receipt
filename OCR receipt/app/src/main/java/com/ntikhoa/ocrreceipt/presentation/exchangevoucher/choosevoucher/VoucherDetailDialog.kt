@@ -7,7 +7,6 @@ import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.view.Window
 import com.ntikhoa.ocrreceipt.business.domain.model.Voucher
 import com.ntikhoa.ocrreceipt.databinding.LayoutVoucherDetailDialogBinding
 
@@ -22,9 +21,9 @@ class VoucherDetailDialog(context: Context, val voucher: Voucher) :
         window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
         binding.layoutVoucher.apply {
-            tvVoucherName.text = voucher.Name
-            tvGiftName.text = voucher.GiftName
-            tvDescription.text = voucher.Description
+            tvVoucherName.text = voucher.name
+            tvGiftName.text = voucher.giftName
+            tvDescription.text = voucher.description
         }
         binding.flRoot.setOnClickListener {
             dismiss()

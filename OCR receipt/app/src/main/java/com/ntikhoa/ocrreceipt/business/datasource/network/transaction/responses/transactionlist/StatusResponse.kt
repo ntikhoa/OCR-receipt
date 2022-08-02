@@ -1,4 +1,4 @@
-package com.ntikhoa.ocrreceipt.business.datasource.network.transaction.responses
+package com.ntikhoa.ocrreceipt.business.datasource.network.transaction.responses.transactionlist
 
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName

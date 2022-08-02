@@ -16,13 +16,13 @@ data class VoucherResponse (
     @SerializedName("GiftName")
     @Expose
     val GiftName: String,
-    @SerializedName("CreatedAt")
-    @Expose
-    val CreatedAt: String?,
-    @SerializedName("DeletedAt")
-    @Expose
-    val DeletedAt: String?,
-    @SerializedName("UpdatedAt")
-    @Expose
-    val UpdatedAt: String?
+//    @SerializedName("CreatedAt")
+//    @Expose
+//    val CreatedAt: String?,
+//    @SerializedName("DeletedAt")
+//    @Expose
+//    val DeletedAt: String?,
+//    @SerializedName("UpdatedAt")
+//    @Expose
+//    val UpdatedAt: String?
 )
