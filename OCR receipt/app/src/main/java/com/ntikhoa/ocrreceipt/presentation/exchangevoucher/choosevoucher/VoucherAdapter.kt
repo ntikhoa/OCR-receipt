@@ -38,7 +38,7 @@ class VoucherAdapter(var currentVoucherID: Int? = -1) :
     companion object {
         val DIFF_CALLBACK = object : DiffUtil.ItemCallback<Voucher>() {
             override fun areItemsTheSame(oldItem: Voucher, newItem: Voucher): Boolean {
-                return oldItem.ID == newItem.ID
+                return oldItem.id == newItem.id
             }
 
             override fun areContentsTheSame(oldItem: Voucher, newItem: Voucher): Boolean {
@@ -69,7 +69,7 @@ class VoucherAdapter(var currentVoucherID: Int? = -1) :
             binding.ll.setOnClickListener {
                 val position = adapterPosition
                 if (position != RecyclerView.NO_POSITION) {
-                    currentVoucherID = currentList[position].ID
+                    currentVoucherID = currentList[position].id
                     notifyDataSetChanged()
                     listener?.onClick(position)
                 }
@@ -86,9 +86,9 @@ class VoucherAdapter(var currentVoucherID: Int? = -1) :
 
         fun bind(voucher: Voucher, position: Int) {
             binding.apply {
-                tvVoucherName.text = voucher.Name
-                tvGift.text = voucher.GiftName
-                if (voucher.ID == currentVoucherID) {
+                tvVoucherName.text = voucher.name
+                tvGift.text = voucher.giftName
+                if (voucher.id == currentVoucherID) {
                     ivChosen.visibility = View.VISIBLE
                 } else ivChosen.visibility = View.GONE
             }

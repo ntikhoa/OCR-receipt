@@ -1,14 +1,15 @@
-package com.ntikhoa.ocrreceipt.presentation.transaction
+package com.ntikhoa.ocrreceipt.presentation.transaction.transactionlist
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.ntikhoa.ocrreceipt.business.repeatLifecycleFlow
 import com.ntikhoa.ocrreceipt.databinding.ActivityTransactionHistoryBinding
 import com.ntikhoa.ocrreceipt.presentation.setVisibility
+import com.ntikhoa.ocrreceipt.presentation.transaction.transactiondetail.TransactionDetailActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 
@@ -59,6 +60,11 @@ class TransactionHistoryActivity : AppCompatActivity() {
                     }
                 }
             })
+        }
+        adapter.setOnItemClickListener { position, item ->
+            val detailIntent = Intent(applicationContext, TransactionDetailActivity::class.java)
+            detailIntent.putExtra("id", item.id)
+            startActivity(detailIntent)
         }
     }
 }

@@ -1,6 +1,7 @@
 package com.ntikhoa.ocrreceipt.di.transaction
 
 import com.ntikhoa.ocrreceipt.business.datasource.network.transaction.TransactionService
+import com.ntikhoa.ocrreceipt.business.usecase.transaction.GetTransactionDetailUC
 import com.ntikhoa.ocrreceipt.business.usecase.transaction.GetTransactionsUC
 import dagger.Module
 import dagger.Provides
@@ -23,5 +24,11 @@ object TransactionModule {
     @Provides
     fun providesGetTransactionsUC(service: TransactionService): GetTransactionsUC {
         return GetTransactionsUC(service)
+    }
+
+    @ActivityRetainedScoped
+    @Provides
+    fun providesGetTransactionDetailUC(service: TransactionService): GetTransactionDetailUC {
+        return GetTransactionDetailUC(service)
     }
 }

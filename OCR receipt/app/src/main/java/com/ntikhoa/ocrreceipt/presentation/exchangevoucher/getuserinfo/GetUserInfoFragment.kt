@@ -3,12 +3,10 @@ package com.ntikhoa.ocrreceipt.presentation.exchangevoucher.getuserinfo
 import android.os.Bundle
 import android.view.View
 import androidx.core.widget.addTextChangedListener
-import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.ntikhoa.ocrreceipt.R
-import com.ntikhoa.ocrreceipt.business.domain.model.CustomerInfo
 import com.ntikhoa.ocrreceipt.business.domain.model.Voucher
 import com.ntikhoa.ocrreceipt.databinding.FragmentGetUserInfoBinding
 import com.ntikhoa.ocrreceipt.presentation.exchangevoucher.ExchangeVoucherViewModel
@@ -78,9 +76,9 @@ class GetUserInfoFragment : Fragment(R.layout.fragment_get_user_info) {
 
     private fun setVoucherInfo(voucher: Voucher) {
         binding.layoutVoucher.apply {
-            tvVoucherName.text = voucher.Name
-            tvGiftName.text = voucher.GiftName
-            tvDescription.text = voucher.Description
+            tvVoucherName.text = voucher.name
+            tvGiftName.text = voucher.giftName
+            tvDescription.text = voucher.description
         }
     }
 

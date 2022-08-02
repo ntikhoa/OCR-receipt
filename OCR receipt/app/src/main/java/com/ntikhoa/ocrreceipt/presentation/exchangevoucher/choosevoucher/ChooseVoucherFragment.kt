@@ -7,7 +7,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.ntikhoa.ocrreceipt.R
-import com.ntikhoa.ocrreceipt.business.domain.model.Voucher
 import com.ntikhoa.ocrreceipt.business.repeatLifecycleFlow
 import com.ntikhoa.ocrreceipt.databinding.FragmentChooseVoucherBinding
 import com.ntikhoa.ocrreceipt.presentation.exchangevoucher.ExchangeVoucherActivity
@@ -78,7 +77,7 @@ class ChooseVoucherFragment : Fragment(R.layout.fragment_choose_voucher) {
 
     private fun initRecyclerView() {
         binding.apply {
-            adapter = VoucherAdapter(viewModel.voucher?.ID)
+            adapter = VoucherAdapter(viewModel.voucher?.id)
             rvVoucher.adapter = adapter
             
             adapter.setOnItemClickListener { position ->

@@ -1,4 +1,4 @@
-package com.ntikhoa.ocrreceipt.presentation.transaction
+package com.ntikhoa.ocrreceipt.presentation.transaction.transactionlist
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -7,8 +7,18 @@ import com.ntikhoa.ocrreceipt.R
 import com.ntikhoa.ocrreceipt.business.domain.model.Transaction
 import com.ntikhoa.ocrreceipt.databinding.LayoutTransactionItemBinding
 
-class TransactionAdapter(private val interaction: Interaction? = null) :
+class TransactionAdapter :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+
+    private var onItemClickListener: OnItemClickListener? = null
+    fun setOnItemClickListener(listener: (position: Int, item: Transaction) -> Unit) {
+        onItemClickListener = object : OnItemClickListener {
+            override fun onItemClick(position: Int, item: Transaction) {
+                listener(position, item)
+            }
+
+        }
+    }
 
     private val DIFF_CALLBACK = object : DiffUtil.ItemCallback<Transaction>() {
 
@@ -50,8 +60,17 @@ class TransactionAdapter(private val interaction: Interaction? = null) :
         differ.submitList(newList)
     }
 
-    class TransactionViewHolder(private val binding: LayoutTransactionItemBinding) :
+    inner class TransactionViewHolder(private val binding: LayoutTransactionItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
+
+        init {
+            binding.ll.setOnClickListener {
+                val position = adapterPosition
+                if (position != RecyclerView.NO_POSITION) {
+                    onItemClickListener?.onItemClick(position, differ.currentList[position])
+                }
+            }
+        }
 
         fun bind(item: Transaction) {
             binding.apply {
@@ -61,8 +80,8 @@ class TransactionAdapter(private val interaction: Interaction? = null) :
         }
     }
 
-    interface Interaction {
-        fun onItemSelected(position: Int, item: Transaction)
+    interface OnItemClickListener {
+        fun onItemClick(position: Int, item: Transaction)
     }
 
     internal inner class TransactionRecyclerChangeCallBack(

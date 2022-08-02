@@ -143,7 +143,7 @@ constructor(
         val pricesRequestBody =
             prices.map { MultipartBody.Part.createFormData("prices", it.toString()) }
         val voucherIDRequestBody =
-            RequestBody.create(MediaType.parse("text/plain"), voucher!!.ID.toString())
+            RequestBody.create(MediaType.parse("text/plain"), voucher!!.id.toString())
         val customerNameRequestBody =
             RequestBody.create(MediaType.parse("text/plain"), customerInfo.customerName)
         val customerPhoneRequestBody =

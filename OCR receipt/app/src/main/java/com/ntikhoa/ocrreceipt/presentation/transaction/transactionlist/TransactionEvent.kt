@@ -1,4 +1,4 @@
-package com.ntikhoa.ocrreceipt.presentation.transaction
+package com.ntikhoa.ocrreceipt.presentation.transaction.transactionlist
 
 
 sealed class TransactionEvent {

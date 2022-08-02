@@ -1,4 +1,4 @@
-package com.ntikhoa.ocrreceipt.presentation.transaction
+package com.ntikhoa.ocrreceipt.presentation.transaction.transactionlist
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

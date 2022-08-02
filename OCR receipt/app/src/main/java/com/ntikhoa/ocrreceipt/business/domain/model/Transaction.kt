@@ -1,9 +1,6 @@
 package com.ntikhoa.ocrreceipt.business.domain.model
 
-import com.google.gson.annotations.Expose
-import com.google.gson.annotations.SerializedName
-import com.ntikhoa.ocrreceipt.business.datasource.network.transaction.responses.ReceiptResponse
-import com.ntikhoa.ocrreceipt.business.datasource.network.transaction.responses.StatusResponse
+import com.ntikhoa.ocrreceipt.business.datasource.network.transaction.responses.transactionlist.ReceiptResponse
 
 data class Transaction(
     val id: Int,
