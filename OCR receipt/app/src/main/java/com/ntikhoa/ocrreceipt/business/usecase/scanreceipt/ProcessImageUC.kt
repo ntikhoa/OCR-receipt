@@ -36,6 +36,18 @@ class ProcessImageUC {
         sharp(mat, mat)
         binarization(mat, mat)
         dilation(mat, mat)
+
+        Core.copyMakeBorder(
+            mat,
+            mat,
+            150,
+            150,
+            150,
+            150,
+            Core.BORDER_CONSTANT,
+            Scalar(1.0, 1.0, 1.0)
+        )
+
         emit(DataState(data = convertToBitmap(mat)))
     }.catch {
         emit(handleUseCaseException(it))
@@ -50,6 +62,18 @@ class ProcessImageUC {
         sharp(mat, mat)
         binarization(mat, mat)
         dilation(mat, mat)
+
+        Core.copyMakeBorder(
+            mat,
+            mat,
+            150,
+            150,
+            150,
+            150,
+            Core.BORDER_CONSTANT,
+            Scalar(1.0, 1.0, 1.0)
+        )
+
         emit(DataState(data = convertToBitmap(mat)))
     }.catch {
         emit(handleUseCaseException(it))

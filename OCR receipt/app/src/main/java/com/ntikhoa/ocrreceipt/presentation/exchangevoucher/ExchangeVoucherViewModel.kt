@@ -259,6 +259,7 @@ constructor(
                 val copiedState = _state.value.copy()
 
                 dataState.data?.let {
+                    println(it.text)
                     extractReceiptText(it)
                 }
 
